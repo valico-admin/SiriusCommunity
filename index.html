@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sirius Community Time & Volunteer Tracker</title>
+    <title>Sirius Community Time Tracker</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -445,7 +445,7 @@
                 <input type="hidden" id="modalUserId">
                 <div>
                     <label class="block font-semibold text-slate-600 mb-1">Full Name</label>
-                    <input type="text" id="modalUserName" required placeholder="Member Name" class="w-full p-2.5 border border-slate-300 rounded-lg text-xs">
+                    <input type="text" id="modalUserName" required placeholder="Valico / Member Name" class="w-full p-2.5 border border-slate-300 rounded-lg text-xs">
                 </div>
                 <div>
                     <label class="block font-semibold text-slate-600 mb-1">Username / Email Prefix</label>
@@ -466,18 +466,964 @@
                     <div>
                         <label class="block font-semibold text-slate-600 mb-1">Role</label>
                         <select id="modalUserRole" class="w-full p-2.5 border border-slate-300 rounded-lg text-xs">
-                            <option value="resident">Resident Member</option>
-                            <option value="admin">Administrator</option>
+                            <option value="Standard Member">Standard Member</option>
+                            <option value="Administrator">Administrator</option>
                         </select>
                     </div>
+                    <div>
+                        <label class="block font-semibold text-slate-600 mb-1">Department / Focal</label>
+                        <input type="text" id="modalUserDept" placeholder="e.g. Permaculture" class="w-full p-2.5 border border-slate-300 rounded-lg text-xs">
+                    </div>
                 </div>
-                <div class="flex justify-end gap-2 pt-3">
-                    <button type="button" onclick="closeModal('userModal')" class="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg font-bold">Cancel</button>
-                    <button type="submit" class="px-4 py-2 bg-emerald-700 text-white rounded-lg font-bold">Save Profile</button>
+                <div class="pt-3 flex gap-2 justify-end">
+                    <button type="button" onclick="closeModal('userModal')" class="px-4 py-2 bg-slate-100 text-slate-700 font-semibold rounded-lg">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-emerald-700 text-white font-bold rounded-lg shadow-xs">Save User</button>
                 </div>
             </form>
         </div>
     </div>
 
+    <!-- Admin Reset Password Modal -->
+    <div id="resetPasswordModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h3 class="text-lg font-bold text-slate-800"><i class="fa-solid fa-key text-amber-500 mr-2"></i>Reset User Password</h3>
+                <button onclick="closeModal('resetPasswordModal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form onsubmit="handleAdminResetPasswordSubmit(event)" class="space-y-3 text-xs">
+                <input type="hidden" id="resetTargetUserId">
+                <div>
+                    <label class="block font-semibold text-slate-600 mb-1">Target Account</label>
+                    <input type="text" id="resetTargetUserEmail" readonly class="w-full p-2.5 bg-slate-100 border border-slate-300 rounded-lg text-xs font-mono text-slate-600">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-600 mb-1">New Temporary Password</label>
+                    <input type="text" id="resetTargetNewPassword" required minlength="6" value="sirius123" class="w-full p-2.5 border border-slate-300 rounded-lg text-xs font-mono">
+                </div>
+                <div class="flex items-center gap-2 pt-1">
+                    <input type="checkbox" id="resetForceChange" checked class="rounded text-emerald-600">
+                    <label for="resetForceChange" class="text-xs text-slate-600">Force user to set a new password on login</label>
+                </div>
+                <div class="pt-3 flex gap-2 justify-end">
+                    <button type="button" onclick="closeModal('resetPasswordModal')" class="px-4 py-2 bg-slate-100 text-slate-700 font-semibold rounded-lg">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-amber-600 text-white font-bold rounded-lg shadow-xs">Reset Password</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Category Create Modal -->
+    <div id="categoryModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h3 class="text-lg font-bold text-slate-800">Add Category</h3>
+                <button onclick="closeModal('categoryModal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="block font-semibold text-slate-600 mb-1">Category Title</label>
+                    <input type="text" id="newCategoryTitle" placeholder="e.g. Forest Stewardship" class="w-full p-2.5 border border-slate-300 rounded-lg text-xs">
+                </div>
+                <div class="pt-3 flex gap-2 justify-end">
+                    <button type="button" onclick="closeModal('categoryModal')" class="px-4 py-2 bg-slate-100 text-slate-700 font-semibold rounded-lg">Cancel</button>
+                    <button type="button" onclick="saveCategory()" class="px-4 py-2 bg-emerald-700 text-white font-bold rounded-lg shadow-xs">Add</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Add/Edit Entry Modal -->
+    <div id="entryModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h3 id="entryModalTitle" class="text-lg font-bold text-slate-800">Admin Log Entry</h3>
+                <button onclick="closeModal('entryModal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form onsubmit="saveAdminEntry(event)" class="space-y-3 text-xs">
+                <input type="hidden" id="adminEntryId">
+                <div>
+                    <label class="block font-semibold text-slate-600 mb-1">Select Member</label>
+                    <select id="adminEntryUser" class="w-full p-2.5 border border-slate-300 rounded-lg text-xs"></select>
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-600 mb-1">Task Description</label>
+                    <input type="text" id="adminEntryTask" required class="w-full p-2.5 border border-slate-300 rounded-lg text-xs">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-slate-600 mb-1">Category</label>
+                        <select id="adminEntryCategory" class="w-full p-2.5 border border-slate-300 rounded-lg text-xs"></select>
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-600 mb-1">Work Type</label>
+                        <select id="adminEntryWorkType" class="w-full p-2.5 border border-slate-300 rounded-lg text-xs">
+                            <option value="Volunteer / Duty">Volunteer / Duty</option>
+                            <option value="Staff / Paid">Staff / Paid</option>
+                            <option value="Personal / Co-op">Personal / Co-op</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-slate-600 mb-1">Date</label>
+                        <input type="date" id="adminEntryDate" required class="w-full p-2.5 border border-slate-300 rounded-lg text-xs">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-600 mb-1">Duration (Hours)</label>
+                        <input type="number" id="adminEntryHours" step="0.25" min="0.25" required class="w-full p-2.5 border border-slate-300 rounded-lg text-xs">
+                    </div>
+                </div>
+                <div class="pt-3 flex gap-2 justify-end">
+                    <button type="button" onclick="closeModal('entryModal')" class="px-4 py-2 bg-slate-100 text-slate-700 font-semibold rounded-lg">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-emerald-700 text-white font-bold rounded-lg shadow-xs">Save Log Record</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- APPLICATION LOGIC -->
+    <script>
+        const DOMAIN = '@siriuscommunity.org';
+
+        // --- INITIAL DEFAULT DATA ---
+        const INITIAL_USERS = [
+            { id: 'usr_valico', name: 'Valico', email: 'valico@siriuscommunity.org', password: 'sirius123', role: 'Administrator', department: 'Governance', forcePasswordChange: false },
+            { id: 'usr_res1', name: 'Elena Rostova', email: 'resident@siriuscommunity.org', password: 'sirius123', role: 'Standard Member', department: 'Organic Farm', forcePasswordChange: false },
+            { id: 'usr_res2', name: 'Marcus Vance', email: 'marcus@siriuscommunity.org', password: 'sirius123', role: 'Standard Member', department: 'Eco-Building', forcePasswordChange: true }
+        ];
+
+        const INITIAL_CATEGORIES = [
+            'Organic Farm & Permaculture',
+            'Kitchen & Food Prep',
+            'Eco-Building & Solar',
+            'Governance & Meetings',
+            'Education & Workshops',
+            'Joyful Productivity / Saturday Duty',
+            'General Maintenance'
+        ];
+
+        const INITIAL_ENTRIES = [
+            { id: 'ent_1', userId: 'usr_res1', task: 'Saturday Joyful Productivity soil prep', category: 'Joyful Productivity / Saturday Duty', workType: 'Volunteer / Duty', date: '2026-10-20', durationMs: 10800000 },
+            { id: 'ent_2', userId: 'usr_res2', task: 'Octagon Community Center floor sealing', category: 'Eco-Building & Solar', workType: 'Volunteer / Duty', date: '2026-10-21', durationMs: 14400000 },
+            { id: 'ent_3', userId: 'usr_valico', task: 'Community Council agenda & grant review', category: 'Governance & Meetings', workType: 'Staff / Paid', date: '2026-10-22', durationMs: 7200000 },
+            { id: 'ent_4', userId: 'usr_res1', task: 'Solar greenhouse tomato harvesting', category: 'Organic Farm & Permaculture', workType: 'Volunteer / Duty', date: '2026-10-23', durationMs: 5400000 }
+        ];
+
+        // --- APP STATE ---
+        let users = JSON.parse(localStorage.getItem('sirius_v3_users')) || INITIAL_USERS;
+        let categories = JSON.parse(localStorage.getItem('sirius_v3_categories')) || INITIAL_CATEGORIES;
+        let entries = JSON.parse(localStorage.getItem('sirius_v3_entries')) || INITIAL_ENTRIES;
+        let currentUserId = localStorage.getItem('sirius_v3_session_user') || null;
+
+        // Active Timer Variables
+        let timerInterval = null;
+        let timerStartTime = null;
+        let timerElapsedTime = 0;
+        let isTimerRunning = false;
+
+        // Chart References
+        let categoryChartInstance = null;
+        let userContribChartInstance = null;
+
+        // --- INITIALIZATION ---
+        window.onload = function() {
+            saveState();
+            populateCategoryDropdowns();
+            
+            if (currentUserId && getCurrentUser()) {
+                const u = getCurrentUser();
+                if (u.forcePasswordChange) {
+                    showPasswordSetup(u.id);
+                } else {
+                    showDashboard();
+                }
+            } else {
+                showLogin();
+            }
+
+            document.getElementById('manualDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('adminEntryDate').value = new Date().toISOString().split('T')[0];
+        };
+
+        function saveState() {
+            localStorage.setItem('sirius_v3_users', JSON.stringify(users));
+            localStorage.setItem('sirius_v3_categories', JSON.stringify(categories));
+            localStorage.setItem('sirius_v3_entries', JSON.stringify(entries));
+            if (currentUserId) localStorage.setItem('sirius_v3_session_user', currentUserId);
+            else localStorage.removeItem('sirius_v3_session_user');
+        }
+
+        function getCurrentUser() {
+            return users.find(u => u.id === currentUserId);
+        }
+
+        // --- AUTHENTICATION & LOGIN ---
+        function handleLogin(e) {
+            e.preventDefault();
+            let email = document.getElementById('loginEmail').value.trim().toLowerCase();
+            const password = document.getElementById('loginPassword').value.trim();
+
+            if (!email.endsWith(DOMAIN)) {
+                alert(`Login restricted. Email must end with ${DOMAIN}`);
+                return;
+            }
+
+            const user = users.find(u => u.email.toLowerCase() === email && u.password === password);
+            if (user) {
+                currentUserId = user.id;
+                saveState();
+
+                if (user.forcePasswordChange) {
+                    showPasswordSetup(user.id);
+                } else {
+                    showDashboard();
+                }
+            } else {
+                alert('Invalid credentials. Check email prefix or password.');
+            }
+        }
+
+        function showPasswordSetup(userId) {
+            document.getElementById('loginView').classList.add('hidden');
+            document.getElementById('dashboardView').classList.add('hidden');
+            document.getElementById('passwordSetupView').classList.remove('hidden');
+            document.getElementById('setupUserId').value = userId;
+        }
+
+        function handlePasswordSetup(e) {
+            e.preventDefault();
+            const userId = document.getElementById('setupUserId').value;
+            const newPass = document.getElementById('newPermanentPassword').value.trim();
+            const confirmPass = document.getElementById('confirmPermanentPassword').value.trim();
+
+            if (newPass !== confirmPass) {
+                alert('Passwords do not match. Please try again.');
+                return;
+            }
+
+            const user = users.find(u => u.id === userId);
+            if (user) {
+                user.password = newPass;
+                user.forcePasswordChange = false;
+                saveState();
+                alert('Password updated successfully!');
+                document.getElementById('passwordSetupView').classList.add('hidden');
+                showDashboard();
+            }
+        }
+
+        function handleLogout() {
+            if (isTimerRunning) {
+                if (!confirm('You have an active running timer. Are you sure you want to log out?')) return;
+                pauseTimer();
+            }
+            currentUserId = null;
+            saveState();
+            showLogin();
+        }
+
+        function showLogin() {
+            document.getElementById('loginView').classList.remove('hidden');
+            document.getElementById('passwordSetupView').classList.add('hidden');
+            document.getElementById('dashboardView').classList.add('hidden');
+            document.getElementById('authHeaderArea').innerHTML = '';
+        }
+
+        function showDashboard() {
+            const user = getCurrentUser();
+            document.getElementById('loginView').classList.add('hidden');
+            document.getElementById('passwordSetupView').classList.add('hidden');
+            document.getElementById('dashboardView').classList.remove('hidden');
+
+            // Render Header Auth Controls
+            const authArea = document.getElementById('authHeaderArea');
+            authArea.innerHTML = `
+                <div class="text-right hidden sm:block">
+                    <div class="font-bold text-sm text-emerald-100">${user.name}</div>
+                    <div class="text-[10px] text-emerald-300">${user.role} (${user.email})</div>
+                </div>
+                <button onclick="handleLogout()" class="bg-emerald-800 hover:bg-emerald-700 text-emerald-100 text-xs px-3 py-1.5 rounded-lg border border-emerald-700 transition cursor-pointer">
+                    <i class="fa-solid fa-right-from-bracket mr-1"></i> Sign Out
+                </button>
+            `;
+
+            // Admin tab visibility
+            const adminBadge = document.getElementById('adminTabBadge');
+            if (user.role === 'Administrator') {
+                adminBadge.classList.remove('hidden');
+            } else {
+                adminBadge.classList.add('hidden');
+            }
+
+            switchTab('user');
+        }
+
+        // --- NAVIGATION TABS ---
+        function switchTab(tab) {
+            const user = getCurrentUser();
+            if (tab === 'admin' && user.role !== 'Administrator') {
+                alert('Access restricted to Administrators only.');
+                return;
+            }
+
+            const userTab = document.getElementById('userTab');
+            const adminTab = document.getElementById('adminTab');
+            const tabUserBtn = document.getElementById('tabUserBtn');
+            const tabAdminBtn = document.getElementById('tabAdminBtn');
+
+            if (tab === 'user') {
+                userTab.classList.remove('hidden');
+                adminTab.classList.add('hidden');
+                tabUserBtn.className = "flex-1 py-3 px-4 font-semibold text-sm rounded-lg flex items-center justify-center gap-2 transition cursor-pointer bg-emerald-700 text-white shadow-xs";
+                tabAdminBtn.className = "flex-1 py-3 px-4 font-semibold text-sm rounded-lg flex items-center justify-center gap-2 transition cursor-pointer text-slate-600 hover:text-slate-900 hover:bg-slate-100";
+                renderUserWorkspace();
+            } else {
+                userTab.classList.add('hidden');
+                adminTab.classList.remove('hidden');
+                tabAdminBtn.className = "flex-1 py-3 px-4 font-semibold text-sm rounded-lg flex items-center justify-center gap-2 transition cursor-pointer bg-emerald-700 text-white shadow-xs";
+                tabUserBtn.className = "flex-1 py-3 px-4 font-semibold text-sm rounded-lg flex items-center justify-center gap-2 transition cursor-pointer text-slate-600 hover:text-slate-900 hover:bg-slate-100";
+                renderAdminDashboard();
+            }
+        }
+
+        // --- CATEGORIES MANAGEMENT ---
+        function populateCategoryDropdowns() {
+            const selectors = ['timerCategory', 'manualCategory', 'adminFilterCategory', 'adminEntryCategory'];
+            selectors.forEach(id => {
+                const elem = document.getElementById(id);
+                if (!elem) return;
+                
+                const currentVal = elem.value;
+                elem.innerHTML = id === 'adminFilterCategory' ? '<option value="ALL">All Categories</option>' : '';
+                
+                categories.forEach(cat => {
+                    const opt = document.createElement('option');
+                    opt.value = cat;
+                    opt.innerText = cat;
+                    elem.appendChild(opt);
+                });
+
+                if (currentVal) elem.value = currentVal;
+            });
+        }
+
+        function openAddCategoryModal() {
+            document.getElementById('newCategoryTitle').value = '';
+            openModal('categoryModal');
+        }
+
+        function saveCategory() {
+            const title = document.getElementById('newCategoryTitle').value.trim();
+            if (!title) return alert('Enter category title');
+            if (categories.includes(title)) return alert('Category already exists');
+
+            categories.push(title);
+            saveState();
+            populateCategoryDropdowns();
+            renderAdminCategoriesList();
+            closeModal('categoryModal');
+        }
+
+        function deleteCategory(catName) {
+            if (confirm(`Delete category "${catName}"?`)) {
+                categories = categories.filter(c => c !== catName);
+                saveState();
+                populateCategoryDropdowns();
+                renderAdminCategoriesList();
+            }
+        }
+
+        function renderAdminCategoriesList() {
+            const container = document.getElementById('adminCategoriesList');
+            container.innerHTML = '';
+            categories.forEach(cat => {
+                const count = entries.filter(e => e.category === cat).length;
+                const div = document.createElement('div');
+                div.className = "p-2.5 bg-slate-50 border border-slate-200 rounded-lg flex justify-between items-center text-xs";
+                div.innerHTML = `
+                    <div>
+                        <span class="font-bold text-slate-800">${cat}</span>
+                        <span class="text-slate-400 ml-2">(${count} logs)</span>
+                    </div>
+                    <button onclick="deleteCategory('${cat}')" class="text-rose-500 hover:text-rose-700 cursor-pointer"><i class="fa-solid fa-trash"></i></button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // --- TIMER & USER WORKSPACE ---
+        function formatMs(ms) {
+            const totalSec = Math.floor(ms / 1000);
+            const hrs = String(Math.floor(totalSec / 3600)).padStart(2, '0');
+            const mins = String(Math.floor((totalSec % 3600) / 60)).padStart(2, '0');
+            const secs = String(totalSec % 60).padStart(2, '0');
+            return `${hrs}:${mins}:${secs}`;
+        }
+
+        function toggleTimer() {
+            const taskInput = document.getElementById('timerTask');
+            const categorySelect = document.getElementById('timerCategory');
+            const workTypeSelect = document.getElementById('timerWorkType');
+            const toggleBtn = document.getElementById('timerToggleBtn');
+            const toggleIcon = document.getElementById('timerToggleIcon');
+            const toggleText = document.getElementById('timerToggleText');
+            const pauseBtn = document.getElementById('timerPauseBtn');
+            const statusText = document.getElementById('timerStatus');
+
+            if (!isTimerRunning) {
+                if (!taskInput.value.trim()) return alert('Please enter a task description.');
+
+                isTimerRunning = true;
+                timerStartTime = Date.now() - timerElapsedTime;
+
+                toggleBtn.className = "flex-1 py-2.5 px-4 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-lg shadow-xs transition flex items-center justify-center gap-2 cursor-pointer";
+                toggleIcon.className = "fa-solid fa-square";
+                toggleText.innerText = "Stop & Save";
+                pauseBtn.classList.remove('hidden');
+                statusText.innerText = `Recording: "${taskInput.value.trim()}"`;
+
+                timerInterval = setInterval(() => {
+                    timerElapsedTime = Date.now() - timerStartTime;
+                    document.getElementById('timerDisplay').innerText = formatMs(timerElapsedTime);
+                }, 1000);
+
+            } else {
+                // Stop and Save
+                clearInterval(timerInterval);
+                isTimerRunning = false;
+
+                const newEntry = {
+                    id: 'ent_' + Date.now(),
+                    userId: currentUserId,
+                    task: taskInput.value.trim(),
+                    category: categorySelect.value,
+                    workType: workTypeSelect.value,
+                    date: new Date().toISOString().split('T')[0],
+                    durationMs: timerElapsedTime
+                };
+
+                entries.unshift(newEntry);
+                saveState();
+
+                // Reset UI
+                timerElapsedTime = 0;
+                document.getElementById('timerDisplay').innerText = "00:00:00";
+                toggleBtn.className = "flex-1 py-2.5 px-4 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-lg shadow-xs transition flex items-center justify-center gap-2 cursor-pointer";
+                toggleIcon.className = "fa-solid fa-play";
+                toggleText.innerText = "Start";
+                pauseBtn.classList.add('hidden');
+                statusText.innerText = "Timer saved successfully!";
+                taskInput.value = "";
+
+                renderUserWorkspace();
+            }
+        }
+
+        function pauseTimer() {
+            if (!isTimerRunning) return;
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+            document.getElementById('timerStatus').innerText = "Timer paused";
+            document.getElementById('timerToggleText').innerText = "Resume";
+            document.getElementById('timerToggleIcon').className = "fa-solid fa-play";
+        }
+
+        function toggleManualEntryForm() {
+            document.getElementById('manualForm').classList.toggle('hidden');
+        }
+
+        function saveManualEntry() {
+            const task = document.getElementById('timerTask').value.trim() || 'Manual Recorded Hours';
+            const date = document.getElementById('manualDate').value;
+            const hours = parseFloat(document.getElementById('manualHours').value) || 0;
+            const category = document.getElementById('manualCategory').value;
+            const workType = document.getElementById('timerWorkType').value;
+
+            if (!date || hours <= 0) return alert('Provide valid date and duration');
+
+            const newEntry = {
+                id: 'ent_' + Date.now(),
+                userId: currentUserId,
+                task: task,
+                category: category,
+                workType: workType,
+                date: date,
+                durationMs: hours * 3600000
+            };
+
+            entries.unshift(newEntry);
+            saveState();
+            toggleManualEntryForm();
+            renderUserWorkspace();
+        }
+
+        function deleteEntry(id) {
+            if (confirm('Delete this logged entry?')) {
+                entries = entries.filter(e => e.id !== id);
+                saveState();
+                renderUserWorkspace();
+                if (!document.getElementById('adminTab').classList.contains('hidden')) {
+                    renderAdminDashboard();
+                }
+            }
+        }
+
+        function renderUserWorkspace() {
+            const myEntries = entries.filter(e => e.userId === currentUserId);
+            const tbody = document.getElementById('myEntriesTable');
+            tbody.innerHTML = '';
+
+            if (myEntries.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-slate-400">No time entries recorded yet.</td></tr>`;
+            } else {
+                myEntries.forEach(entry => {
+                    const hrs = (entry.durationMs / 3600000).toFixed(2);
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-slate-50 transition";
+                    tr.innerHTML = `
+                        <td class="py-3 px-2 font-semibold text-slate-800">${entry.task}</td>
+                        <td class="py-3 px-2"><span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded font-medium">${entry.category}</span></td>
+                        <td class="py-3 px-2"><span class="text-[10px] bg-emerald-50 text-emerald-800 border border-emerald-200 px-1.5 py-0.5 rounded">${entry.workType}</span></td>
+                        <td class="py-3 px-2 text-slate-500">${entry.date}</td>
+                        <td class="py-3 px-2 font-mono font-bold text-slate-800">${hrs} hrs</td>
+                        <td class="py-3 px-2 text-right">
+                            <button onclick="deleteEntry('${entry.id}')" class="text-rose-500 hover:text-rose-700 p-1 cursor-pointer"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+
+            // Calculations
+            const totalMs = myEntries.reduce((acc, curr) => acc + curr.durationMs, 0);
+            const totalHours = (totalMs / 3600000).toFixed(1);
+            document.getElementById('userTotalLifetimeHours').innerText = `Lifetime: ${totalHours} hrs`;
+
+            // Weekly Target Progress (Target = 10 hrs)
+            const weeklyHours = totalHours; 
+            document.getElementById('userWeeklyHours').innerHTML = `${weeklyHours} <span class="text-base font-normal text-slate-500">hrs logged</span>`;
+            const pct = Math.min(100, Math.round((weeklyHours / 10) * 100));
+            document.getElementById('weeklyProgressBar').style.width = `${pct}%`;
+        }
+
+        // --- ADMIN DASHBOARD & DETAILED INSPECTION ---
+        function renderAdminDashboard() {
+            populateAdminUserFilter();
+            renderAdminActivityTable();
+            renderAdminProfilesTable();
+            renderAdminCategoriesList();
+
+            // Total Hours Overview
+            const totalMs = entries.reduce((acc, curr) => acc + curr.durationMs, 0);
+            document.getElementById('adminStatTotalHours').innerText = `${(totalMs / 3600000).toFixed(1)} hrs`;
+            document.getElementById('adminStatTotalUsers').innerText = users.length;
+            document.getElementById('adminStatTotalTasks').innerText = entries.length;
+            document.getElementById('adminStatTotalCategories').innerText = categories.length;
+
+            renderCharts();
+        }
+
+        function populateAdminUserFilter() {
+            const select = document.getElementById('adminFilterUser');
+            select.innerHTML = '<option value="ALL">All Community Members</option>';
+            users.forEach(u => {
+                const opt = document.createElement('option');
+                opt.value = u.id;
+                opt.innerText = `${u.name} (${u.email})`;
+                select.appendChild(opt);
+            });
+        }
+
+        function renderAdminActivityTable() {
+            const selectedUserId = document.getElementById('adminFilterUser').value;
+            const selectedCat = document.getElementById('adminFilterCategory').value;
+            const selectedWorkType = document.getElementById('adminFilterWorkType').value;
+            const searchKeyword = document.getElementById('adminSearchKeyword').value.toLowerCase().trim();
+
+            let filtered = entries;
+
+            if (selectedUserId !== 'ALL') filtered = filtered.filter(e => e.userId === selectedUserId);
+            if (selectedCat !== 'ALL') filtered = filtered.filter(e => e.category === selectedCat);
+            if (selectedWorkType !== 'ALL') filtered = filtered.filter(e => e.workType === selectedWorkType);
+            if (searchKeyword) filtered = filtered.filter(e => e.task.toLowerCase().includes(searchKeyword));
+
+            const tbody = document.getElementById('adminActivityTable');
+            tbody.innerHTML = '';
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="py-6 text-center text-slate-400">No matching user records found.</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(entry => {
+                const member = users.find(u => u.id === entry.userId) || { name: 'Unknown User', email: 'N/A' };
+                const hrs = (entry.durationMs / 3600000).toFixed(2);
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition";
+                tr.innerHTML = `
+                    <td class="py-3 px-3 font-semibold text-slate-800">
+                        ${member.name}
+                        <div class="text-[10px] text-slate-400 font-normal">${member.email}</div>
+                    </td>
+                    <td class="py-3 px-3 text-slate-700">${entry.task}</td>
+                    <td class="py-3 px-3"><span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded font-medium">${entry.category}</span></td>
+                    <td class="py-3 px-3"><span class="text-[10px] bg-emerald-50 text-emerald-800 border border-emerald-200 px-1.5 py-0.5 rounded">${entry.workType}</span></td>
+                    <td class="py-3 px-3 text-slate-500">${entry.date}</td>
+                    <td class="py-3 px-3 font-mono font-bold text-slate-800">${hrs} hrs</td>
+                    <td class="py-3 px-3 text-right space-x-1">
+                        <button onclick="editAdminEntry('${entry.id}')" class="text-slate-600 hover:text-slate-900 p-1 cursor-pointer"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button onclick="deleteEntry('${entry.id}')" class="text-rose-500 hover:text-rose-700 p-1 cursor-pointer"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // --- USER PROFILES MANAGEMENT ---
+        function renderAdminProfilesTable() {
+            const tbody = document.getElementById('adminUserProfilesTable');
+            tbody.innerHTML = '';
+
+            users.forEach(u => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition";
+                tr.innerHTML = `
+                    <td class="py-2 font-semibold text-slate-800">
+                        ${u.name}
+                        <div class="text-[10px] text-slate-400 font-normal font-mono">${u.email}</div>
+                    </td>
+                    <td class="py-2"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${u.role === 'Administrator' ? 'bg-purple-100 text-purple-800' : 'bg-slate-100 text-slate-700'}">${u.role}</span></td>
+                    <td class="py-2">
+                        ${u.forcePasswordChange 
+                            ? '<span class="text-[10px] bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded font-semibold">Reset Pending</span>' 
+                            : '<span class="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded font-semibold">Active</span>'}
+                    </td>
+                    <td class="py-2 text-right space-x-1">
+                        <button onclick="openAdminResetPasswordModal('${u.id}')" title="Reset Password" class="text-amber-600 hover:text-amber-800 p-1 cursor-pointer"><i class="fa-solid fa-key"></i></button>
+                        <button onclick="openEditUserModal('${u.id}')" title="Edit Profile" class="text-slate-600 hover:text-slate-900 p-1 cursor-pointer"><i class="fa-solid fa-user-pen"></i></button>
+                        <button onclick="deleteUserProfile('${u.id}')" title="Delete Profile" class="text-rose-500 hover:text-rose-700 p-1 cursor-pointer"><i class="fa-solid fa-user-minus"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openCreateUserModal() {
+            document.getElementById('modalUserId').value = '';
+            document.getElementById('modalUserName').value = '';
+            document.getElementById('modalUserPrefix').value = '';
+            document.getElementById('modalUserPassword').value = 'sirius123';
+            document.getElementById('modalForcePasswordChange').checked = true;
+            document.getElementById('modalUserRole').value = 'Standard Member';
+            document.getElementById('modalUserDept').value = '';
+            document.getElementById('userModalTitle').innerText = 'Create Member Profile';
+            openModal('userModal');
+        }
+
+        function openEditUserModal(userId) {
+            const u = users.find(user => user.id === userId);
+            if (!u) return;
+
+            const prefix = u.email.replace(DOMAIN, '');
+
+            document.getElementById('modalUserId').value = u.id;
+            document.getElementById('modalUserName').value = u.name;
+            document.getElementById('modalUserPrefix').value = prefix;
+            document.getElementById('modalUserPassword').value = u.password;
+            document.getElementById('modalForcePasswordChange').checked = u.forcePasswordChange || false;
+            document.getElementById('modalUserRole').value = u.role;
+            document.getElementById('modalUserDept').value = u.department || '';
+            document.getElementById('userModalTitle').innerText = 'Edit Member Profile';
+            openModal('userModal');
+        }
+
+        function saveUserProfile(e) {
+            e.preventDefault();
+            const id = document.getElementById('modalUserId').value;
+            const name = document.getElementById('modalUserName').value.trim();
+            const prefix = document.getElementById('modalUserPrefix').value.trim().toLowerCase();
+            const password = document.getElementById('modalUserPassword').value.trim();
+            const forceChange = document.getElementById('modalForcePasswordChange').checked;
+            const role = document.getElementById('modalUserRole').value;
+            const dept = document.getElementById('modalUserDept').value.trim();
+
+            const fullEmail = prefix + DOMAIN;
+
+            if (id) {
+                // Update
+                const u = users.find(user => user.id === id);
+                if (u) {
+                    u.name = name;
+                    u.email = fullEmail;
+                    u.password = password;
+                    u.forcePasswordChange = forceChange;
+                    u.role = role;
+                    u.department = dept;
+                }
+            } else {
+                // Create
+                if (users.some(u => u.email.toLowerCase() === fullEmail)) {
+                    alert('An account with this username/email already exists!');
+                    return;
+                }
+                users.push({
+                    id: 'usr_' + Date.now(),
+                    name: name,
+                    email: fullEmail,
+                    password: password,
+                    forcePasswordChange: forceChange,
+                    role: role,
+                    department: dept
+                });
+            }
+
+            saveState();
+            renderAdminDashboard();
+            closeModal('userModal');
+        }
+
+        // Admin Reset Password Modal functions
+        function openAdminResetPasswordModal(userId) {
+            const u = users.find(user => user.id === userId);
+            if (!u) return;
+
+            document.getElementById('resetTargetUserId').value = u.id;
+            document.getElementById('resetTargetUserEmail').value = u.email;
+            document.getElementById('resetTargetNewPassword').value = 'sirius123';
+            document.getElementById('resetForceChange').checked = true;
+
+            openModal('resetPasswordModal');
+        }
+
+        function handleAdminResetPasswordSubmit(e) {
+            e.preventDefault();
+            const userId = document.getElementById('resetTargetUserId').value;
+            const newPass = document.getElementById('resetTargetNewPassword').value.trim();
+            const forceChange = document.getElementById('resetForceChange').checked;
+
+            const u = users.find(user => user.id === userId);
+            if (u) {
+                u.password = newPass;
+                u.forcePasswordChange = forceChange;
+                saveState();
+                renderAdminDashboard();
+                closeModal('resetPasswordModal');
+                alert(`Password for ${u.email} has been reset to: ${newPass}`);
+            }
+        }
+
+        function deleteUserProfile(userId) {
+            if (users.length <= 1) return alert('Cannot delete the last remaining user account.');
+            const u = users.find(user => user.id === userId);
+            if (confirm(`Delete member profile "${u.name}" (${u.email})? All associated time records will also be removed.`)) {
+                users = users.filter(user => user.id !== userId);
+                entries = entries.filter(e => e.userId !== userId);
+                saveState();
+                renderAdminDashboard();
+            }
+        }
+
+        // --- ADMIN ENTRY LOGGING / EDITING ---
+        function openAddEntryModal() {
+            document.getElementById('adminEntryId').value = '';
+            document.getElementById('adminEntryTask').value = '';
+            document.getElementById('adminEntryHours').value = '1.0';
+
+            const userSelect = document.getElementById('adminEntryUser');
+            userSelect.innerHTML = '';
+            users.forEach(u => {
+                const opt = document.createElement('option');
+                opt.value = u.id;
+                opt.innerText = `${u.name} (${u.email})`;
+                userSelect.appendChild(opt);
+            });
+
+            document.getElementById('entryModalTitle').innerText = 'Add Entry for Member';
+            openModal('entryModal');
+        }
+
+        function editAdminEntry(entryId) {
+            const entry = entries.find(e => e.id === entryId);
+            if (!entry) return;
+
+            openAddEntryModal();
+            document.getElementById('adminEntryId').value = entry.id;
+            document.getElementById('adminEntryUser').value = entry.userId;
+            document.getElementById('adminEntryTask').value = entry.task;
+            document.getElementById('adminEntryCategory').value = entry.category;
+            document.getElementById('adminEntryWorkType').value = entry.workType;
+            document.getElementById('adminEntryDate').value = entry.date;
+            document.getElementById('adminEntryHours').value = (entry.durationMs / 3600000).toFixed(2);
+            document.getElementById('entryModalTitle').innerText = 'Edit Log Record';
+        }
+
+        function saveAdminEntry(e) {
+            e.preventDefault();
+            const id = document.getElementById('adminEntryId').value;
+            const userId = document.getElementById('adminEntryUser').value;
+            const task = document.getElementById('adminEntryTask').value.trim();
+            const category = document.getElementById('adminEntryCategory').value;
+            const workType = document.getElementById('adminEntryWorkType').value;
+            const date = document.getElementById('adminEntryDate').value;
+            const hours = parseFloat(document.getElementById('adminEntryHours').value) || 0;
+
+            if (id) {
+                const entry = entries.find(item => item.id === id);
+                if (entry) {
+                    entry.userId = userId;
+                    entry.task = task;
+                    entry.category = category;
+                    entry.workType = workType;
+                    entry.date = date;
+                    entry.durationMs = hours * 3600000;
+                }
+            } else {
+                entries.unshift({
+                    id: 'ent_' + Date.now(),
+                    userId: userId,
+                    task: task,
+                    category: category,
+                    workType: workType,
+                    date: date,
+                    durationMs: hours * 3600000
+                });
+            }
+
+            saveState();
+            renderAdminDashboard();
+            closeModal('entryModal');
+        }
+
+        // --- VISUAL CHARTS ---
+        function renderCharts() {
+            // Category Distribution Chart
+            const catTotals = {};
+            categories.forEach(c => catTotals[c] = 0);
+            entries.forEach(e => {
+                catTotals[e.category] = (catTotals[e.category] || 0) + (e.durationMs / 3600000);
+            });
+
+            const catLabels = Object.keys(catTotals);
+            const catData = Object.values(catTotals);
+
+            const ctx1 = document.getElementById('categoryChart').getContext('2d');
+            if (categoryChartInstance) categoryChartInstance.destroy();
+            categoryChartInstance = new Chart(ctx1, {
+                type: 'doughnut',
+                data: {
+                    labels: catLabels,
+                    datasets: [{
+                        data: catData,
+                        backgroundColor: ['#059669', '#0284c7', '#d97706', '#7c3aed', '#db2777', '#4b5563', '#10b981']
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            // Member Contributions Chart
+            const userTotals = {};
+            users.forEach(u => userTotals[u.name] = 0);
+            entries.forEach(e => {
+                const u = users.find(user => user.id === e.userId);
+                if (u) userTotals[u.name] = (userTotals[u.name] || 0) + (e.durationMs / 3600000);
+            });
+
+            const ctx2 = document.getElementById('userContribChart').getContext('2d');
+            if (userContribChartInstance) userContribChartInstance.destroy();
+            userContribChartInstance = new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(userTotals),
+                    datasets: [{
+                        label: 'Total Hours',
+                        data: Object.values(userTotals),
+                        backgroundColor: '#047857'
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+
+        // --- DATA EXPORT, IMPORT & RESET ---
+        function exportMyEntriesCSV() {
+            const myEntries = entries.filter(e => e.userId === currentUserId);
+            downloadCSV(myEntries, 'my_sirius_time_log');
+        }
+
+        function exportAllCommunityCSV() {
+            downloadCSV(entries, 'sirius_community_all_hours');
+        }
+
+        function downloadCSV(dataArray, filename) {
+            let csv = "Member Name,Email,Task Description,Category,Work Type,Date,Duration Hours\n";
+            dataArray.forEach(e => {
+                const u = users.find(usr => usr.id === e.userId) || { name: 'Unknown', email: 'N/A' };
+                const hrs = (e.durationMs / 3600000).toFixed(2);
+                csv += `"${u.name}","${u.email}","${e.task.replace(/"/g, '""')}","${e.category}","${e.workType}","${e.date}",${hrs}\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `${filename}.csv`;
+            link.click();
+        }
+
+        function exportAllCommunityJSON() {
+            const fullBackup = {
+                users: users,
+                categories: categories,
+                entries: entries
+            };
+            const blob = new Blob([JSON.stringify(fullBackup, null, 2)], { type: 'application/json' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `sirius_community_backup_${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+        }
+
+        function importCommunityJSON(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    const data = JSON.parse(event.target.result);
+                    if (data.users && data.categories && data.entries) {
+                        users = data.users;
+                        categories = data.categories;
+                        entries = data.entries;
+                        saveState();
+                        populateCategoryDropdowns();
+                        renderAdminDashboard();
+                        alert('System restored from JSON backup successfully!');
+                    } else {
+                        alert('Invalid backup file structure.');
+                    }
+                } catch (err) {
+                    alert('Error parsing JSON backup file.');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function resetToSampleData() {
+            if (confirm('Reset system data to demo defaults? All current custom entries will be replaced.')) {
+                users = INITIAL_USERS;
+                categories = INITIAL_CATEGORIES;
+                entries = INITIAL_ENTRIES;
+                currentUserId = users[0].id;
+                saveState();
+                populateCategoryDropdowns();
+                showDashboard();
+            }
+        }
+
+        // --- UTILITY MODALS ---
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+    </script>
 </body>
 </html>
