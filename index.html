@@ -17,7 +17,7 @@
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
 
-    <!-- Top Header & Auth State Bar -->
+    <!-- Top Header -->
     <header class="bg-emerald-900 text-white shadow-lg sticky top-0 z-30">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-3">
@@ -26,31 +26,29 @@
                 </div>
                 <div>
                     <span class="font-bold text-xl tracking-tight">Sirius Community</span>
-                    <span class="text-xs bg-emerald-800 text-emerald-200 px-2 py-0.5 rounded-full ml-2 border border-emerald-700">Time & Service Tracker</span>
+                    <span class="text-xs bg-emerald-800 text-emerald-200 px-2 py-0.5 rounded-full ml-2 border border-emerald-700">Time Tracker</span>
                 </div>
             </div>
 
             <!-- User Auth Bar -->
-            <div class="flex items-center space-x-4" id="authHeaderArea">
-                <!-- Dynamically populated -->
-            </div>
+            <div class="flex items-center space-x-4" id="authHeaderArea"></div>
         </div>
     </header>
 
-    <!-- Main App Content -->
+    <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
 
-        <!-- Quick Credentials Banner -->
+        <!-- Credentials Banner -->
         <div id="credentialsTip" class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg mb-6 shadow-xs flex flex-col sm:flex-row justify-between items-start sm:items-center text-xs text-amber-900 gap-2">
             <div>
                 <span class="font-bold"><i class="fa-solid fa-circle-info mr-1"></i> Default Community Accounts:</span> 
                 <span class="ml-2 font-mono">Admin: valico@siriuscommunity.org / sirius123</span> | 
                 <span class="font-mono">Resident: resident@siriuscommunity.org / sirius123</span>
             </div>
-            <button onclick="document.getElementById('credentialsTip').remove()" class="text-amber-700 hover:text-amber-900 font-bold cursor-pointer">Dismiss</button>
+            <button onclick="document.getElementById('credentialsTip').style.display='none'" class="text-amber-700 hover:text-amber-900 font-bold cursor-pointer">Dismiss</button>
         </div>
 
-        <!-- AUTH LOGIN CONTAINER -->
+        <!-- LOGIN VIEW -->
         <div id="loginView" class="max-w-md mx-auto my-12 bg-white rounded-2xl shadow-xl border border-slate-100 p-8">
             <div class="text-center mb-6">
                 <div class="inline-flex p-3 bg-emerald-100 text-emerald-800 rounded-full mb-3">
@@ -63,9 +61,7 @@
             <form onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Community Email</label>
-                    <div class="relative">
-                        <input type="text" id="loginEmail" required placeholder="username@siriuscommunity.org" value="valico@siriuscommunity.org" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
-                    </div>
+                    <input type="text" id="loginEmail" required value="valico@siriuscommunity.org" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Password</label>
@@ -78,36 +74,10 @@
             </form>
         </div>
 
-        <!-- FIRST-TIME / FORCED PASSWORD CHANGE VIEW -->
-        <div id="passwordSetupView" class="hidden max-w-md mx-auto my-12 bg-white rounded-2xl shadow-xl border border-slate-100 p-8">
-            <div class="text-center mb-6">
-                <div class="inline-flex p-3 bg-amber-100 text-amber-800 rounded-full mb-3">
-                    <i class="fa-solid fa-key text-2xl"></i>
-                </div>
-                <h2 class="text-2xl font-bold text-slate-900">Password Setup Required</h2>
-                <p class="text-xs text-slate-500 mt-1">Please set a new permanent password for your account before proceeding.</p>
-            </div>
-
-            <form onsubmit="handlePasswordSetup(event)" class="space-y-4">
-                <input type="hidden" id="setupUserId">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">New Permanent Password</label>
-                    <input type="password" id="newPermanentPassword" required minlength="4" placeholder="At least 4 characters" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Confirm New Password</label>
-                    <input type="password" id="confirmPermanentPassword" required minlength="4" placeholder="Repeat new password" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
-                </div>
-                <button type="submit" class="w-full py-3 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-lg shadow-md transition cursor-pointer">
-                    Set Password & Continue
-                </button>
-            </form>
-        </div>
-
-        <!-- DASHBOARD CONTAINER -->
+        <!-- DASHBOARD VIEW -->
         <div id="dashboardView" class="hidden space-y-6">
 
-            <!-- Navigation Tabs -->
+            <!-- Tabs -->
             <div class="flex border-b border-slate-200 bg-white p-1 rounded-t-xl shadow-xs overflow-x-auto">
                 <button id="tabUserBtn" onclick="switchTab('user')" class="flex-1 py-3 px-4 font-semibold text-sm rounded-lg flex items-center justify-center gap-2 transition cursor-pointer bg-emerald-700 text-white shadow-xs">
                     <i class="fa-solid fa-clock"></i>
@@ -116,393 +86,104 @@
                 <button id="tabAdminBtn" onclick="switchTab('admin')" class="flex-1 py-3 px-4 font-semibold text-sm rounded-lg flex items-center justify-center gap-2 transition cursor-pointer text-slate-600 hover:text-slate-900 hover:bg-slate-100">
                     <i class="fa-solid fa-shield-halved"></i>
                     <span>Admin Dashboard</span>
-                    <span id="adminTabBadge" class="hidden bg-emerald-100 text-emerald-800 text-xs font-bold px-2 py-0.5 rounded-full ml-1">Admin</span>
                 </button>
             </div>
 
-            <!-- USER WORKSPACE TAB -->
+            <!-- USER TAB -->
             <div id="userTab" class="space-y-6">
-
-                <!-- Interactive Live Timer Box -->
+                <!-- Live Tracker -->
                 <div class="bg-white rounded-2xl shadow-xs border border-slate-200 p-6">
                     <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">Live Activity Tracker</h2>
-                    
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
-                        <div class="md:col-span-4">
+                        <div class="md:col-span-5">
                             <label class="block text-xs font-medium text-slate-500 mb-1">Task Description</label>
-                            <input type="text" id="timerTask" placeholder="e.g. Garden harvesting, kitchen duty..." class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                            <input type="text" id="timerTask" placeholder="Garden harvesting, kitchen duty..." class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
                         </div>
-
-                        <div class="md:col-span-3">
-                            <label class="block text-xs font-medium text-slate-500 mb-1">Project Category</label>
-                            <select id="timerCategory" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
-                                <!-- Populated dynamically -->
-                            </select>
+                        <div class="md:col-span-4">
+                            <label class="block text-xs font-medium text-slate-500 mb-1">Category</label>
+                            <select id="timerCategory" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"></select>
                         </div>
-
-                        <div class="md:col-span-2">
-                            <label class="block text-xs font-medium text-slate-500 mb-1">Work Type</label>
-                            <select id="timerWorkType" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
-                                <option value="Volunteer / Duty">Volunteer / Duty</option>
-                                <option value="Staff / Paid">Staff / Paid</option>
-                                <option value="Personal / Co-op">Personal / Co-op</option>
-                            </select>
-                        </div>
-
                         <div class="md:col-span-3 flex flex-col items-center justify-end">
-                            <div id="timerDisplay" class="text-3xl font-mono font-bold text-slate-800 tracking-tight mb-2">00:00:00</div>
-                            <div class="flex gap-2 w-full">
-                                <button id="timerToggleBtn" onclick="toggleTimer()" class="flex-1 py-2.5 px-4 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-lg shadow-xs transition flex items-center justify-center gap-2 cursor-pointer">
-                                    <i id="timerToggleIcon" class="fa-solid fa-play"></i>
-                                    <span id="timerToggleText">Start</span>
-                                </button>
-                                <button id="timerPauseBtn" onclick="pauseTimer()" class="hidden py-2.5 px-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-lg transition cursor-pointer">
-                                    <i class="fa-solid fa-pause"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mt-4 pt-4 border-t border-slate-100 flex justify-between items-center text-xs">
-                        <span id="timerStatus" class="text-slate-400 italic">Timer inactive</span>
-                        <button onclick="toggleManualEntryForm()" class="text-emerald-700 hover:text-emerald-800 font-semibold flex items-center gap-1 cursor-pointer">
-                            <i class="fa-solid fa-calendar-plus"></i> Add Past / Manual Entry
-                        </button>
-                    </div>
-
-                    <!-- Hidden Manual Entry Form -->
-                    <div id="manualForm" class="hidden mt-4 p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
-                        <h4 class="text-xs font-bold text-slate-700 uppercase">Log Past Work Hours</h4>
-                        <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
-                            <div>
-                                <label class="block text-xs text-slate-500 mb-1">Date</label>
-                                <input type="date" id="manualDate" class="w-full p-2 bg-white border border-slate-300 rounded-lg text-xs">
-                            </div>
-                            <div>
-                                <label class="block text-xs text-slate-500 mb-1">Duration (Hours)</label>
-                                <input type="number" id="manualHours" step="0.25" min="0.25" value="1.0" class="w-full p-2 bg-white border border-slate-300 rounded-lg text-xs">
-                            </div>
-                            <div>
-                                <label class="block text-xs text-slate-500 mb-1">Category</label>
-                                <select id="manualCategory" class="w-full p-2 bg-white border border-slate-300 rounded-lg text-xs"></select>
-                            </div>
-                            <div class="flex items-end">
-                                <button onclick="saveManualEntry()" class="w-full py-2 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-lg text-xs transition cursor-pointer">
-                                    Save Entry
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Personal Progress & Weekly Target -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <!-- Target Progress Card -->
-                    <div class="bg-white rounded-2xl shadow-xs border border-slate-200 p-6 flex flex-col justify-between">
-                        <div>
-                            <div class="flex justify-between items-center mb-3">
-                                <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wide">Weekly Goal Progress</h3>
-                                <span class="text-xs bg-emerald-100 text-emerald-800 font-bold px-2.5 py-0.5 rounded-full">Target: 10 hrs</span>
-                            </div>
-                            <div id="userWeeklyHours" class="text-4xl font-extrabold text-slate-900 my-2">0.0 <span class="text-base font-normal text-slate-500">hrs logged</span></div>
-                            <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden my-3">
-                                <div id="weeklyProgressBar" class="bg-emerald-600 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
-                            </div>
-                            <p id="weeklyProgressStatus" class="text-xs text-slate-500">Keep going to meet your community contribution goal!</p>
-                        </div>
-
-                        <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
-                            <span><i class="fa-solid fa-award text-amber-500 mr-1"></i> Sirius Community Duty</span>
-                            <span id="userTotalLifetimeHours" class="font-bold text-slate-700">Lifetime: 0 hrs</span>
-                        </div>
-                    </div>
-
-                    <!-- Personal Recent Activity Log Table -->
-                    <div class="lg:col-span-2 bg-white rounded-2xl shadow-xs border border-slate-200 p-6">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-base font-bold text-slate-800">My Activity Log</h3>
-                            <button onclick="exportMyEntriesCSV()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg font-semibold transition cursor-pointer flex items-center gap-1">
-                                <i class="fa-solid fa-download"></i> Export My CSV
+                            <div id="timerDisplay" class="text-3xl font-mono font-bold text-slate-800 mb-2">00:00:00</div>
+                            <button id="timerToggleBtn" onclick="toggleTimer()" class="w-full py-2.5 px-4 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-lg shadow-xs transition flex items-center justify-center gap-2 cursor-pointer">
+                                <i id="timerToggleIcon" class="fa-solid fa-play"></i>
+                                <span id="timerToggleText">Start</span>
                             </button>
                         </div>
-
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left border-collapse">
-                                <thead>
-                                    <tr class="border-b border-slate-200 text-xs font-semibold text-slate-400 uppercase">
-                                        <th class="pb-3 px-2">Task</th>
-                                        <th class="pb-3 px-2">Category</th>
-                                        <th class="pb-3 px-2">Type</th>
-                                        <th class="pb-3 px-2">Date</th>
-                                        <th class="pb-3 px-2">Duration</th>
-                                        <th class="pb-3 px-2 text-right">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="myEntriesTable" class="divide-y divide-slate-100 text-xs">
-                                    <!-- Populated dynamically -->
-                                </tbody>
-                            </table>
-                        </div>
                     </div>
                 </div>
 
+                <!-- My Activity Log -->
+                <div class="bg-white rounded-2xl shadow-xs border border-slate-200 p-6">
+                    <h3 class="text-base font-bold text-slate-800 mb-4">My Activity Log</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="border-b border-slate-200 text-xs font-semibold text-slate-400 uppercase">
+                                    <th class="pb-3 px-2">Task</th>
+                                    <th class="pb-3 px-2">Category</th>
+                                    <th class="pb-3 px-2">Date</th>
+                                    <th class="pb-3 px-2">Duration</th>
+                                    <th class="pb-3 px-2 text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="myEntriesTable" class="divide-y divide-slate-100 text-xs"></tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
-            <!-- ADMIN DASHBOARD TAB -->
+            <!-- ADMIN TAB -->
             <div id="adminTab" class="hidden space-y-6">
-
-                <!-- Sirius Community Total Hours Metrics Grid -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div class="bg-gradient-to-br from-emerald-800 to-emerald-900 text-white p-5 rounded-2xl shadow-xs">
-                        <span class="text-xs font-bold uppercase tracking-wider text-emerald-200">Sirius Total Hours</span>
+                <!-- Metrics -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="bg-emerald-800 text-white p-5 rounded-2xl shadow-xs">
+                        <span class="text-xs font-bold uppercase text-emerald-200">Total Hours</span>
                         <div id="adminStatTotalHours" class="text-3xl font-extrabold mt-1">0.0 hrs</div>
-                        <span class="text-[11px] text-emerald-300 mt-2 block"><i class="fa-solid fa-users mr-1"></i> Across all members</span>
                     </div>
-
                     <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
-                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Active Members</span>
+                        <span class="text-xs font-bold uppercase text-slate-400">Members</span>
                         <div id="adminStatTotalUsers" class="text-3xl font-bold text-slate-800 mt-1">0</div>
-                        <span class="text-[11px] text-slate-500 mt-2 block"><i class="fa-solid fa-user-check text-emerald-600 mr-1"></i> Registered accounts</span>
                     </div>
-
                     <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
-                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Tasks Logged</span>
+                        <span class="text-xs font-bold uppercase text-slate-400">Total Entries</span>
                         <div id="adminStatTotalTasks" class="text-3xl font-bold text-slate-800 mt-1">0</div>
-                        <span class="text-[11px] text-slate-500 mt-2 block"><i class="fa-solid fa-list-check text-blue-600 mr-1"></i> Activity entries</span>
-                    </div>
-
-                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
-                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Active Categories</span>
-                        <div id="adminStatTotalCategories" class="text-3xl font-bold text-slate-800 mt-1">0</div>
-                        <span class="text-[11px] text-slate-500 mt-2 block"><i class="fa-solid fa-folder text-amber-500 mr-1"></i> Work domains</span>
                     </div>
                 </div>
 
-                <!-- Community Visual Charts -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs">
-                        <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wide mb-4">Hours Distribution by Project Category</h3>
-                        <div class="h-64 flex items-center justify-center">
-                            <canvas id="categoryChart"></canvas>
-                        </div>
-                    </div>
-
-                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs">
-                        <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wide mb-4">Top Member Contributors</h3>
-                        <div class="h-64 flex items-center justify-center">
-                            <canvas id="userContribChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Detailed User Inspection & Audit Panel -->
-                <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-6 space-y-4">
-                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                        <div>
-                            <h3 class="text-lg font-bold text-slate-800">Detailed Member Activity Inspection</h3>
-                            <p class="text-xs text-slate-500">View complete timeline, timestamps, and detailed records for any user</p>
-                        </div>
-                    </div>
-
-                    <!-- Filter Toolbar -->
-                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs">
-                        <div>
-                            <label class="block font-semibold text-slate-600 mb-1">Select User Profile</label>
-                            <select id="adminFilterUser" onchange="renderAdminActivityTable()" class="w-full p-2 bg-white border border-slate-300 rounded-lg">
-                                <option value="ALL">All Community Members</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block font-semibold text-slate-600 mb-1">Project Category</label>
-                            <select id="adminFilterCategory" onchange="renderAdminActivityTable()" class="w-full p-2 bg-white border border-slate-300 rounded-lg">
-                                <option value="ALL">All Categories</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block font-semibold text-slate-600 mb-1">Search Keywords</label>
-                            <input type="text" id="adminSearchKeyword" onkeyup="renderAdminActivityTable()" placeholder="Search description..." class="w-full p-2 bg-white border border-slate-300 rounded-lg">
-                        </div>
-                        <div>
-                            <label class="block font-semibold text-slate-600 mb-1">Work Type</label>
-                            <select id="adminFilterWorkType" onchange="renderAdminActivityTable()" class="w-full p-2 bg-white border border-slate-300 rounded-lg">
-                                <option value="ALL">All Work Types</option>
-                                <option value="Volunteer / Duty">Volunteer / Duty</option>
-                                <option value="Staff / Paid">Staff / Paid</option>
-                                <option value="Personal / Co-op">Personal / Co-op</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Global Inspection Table -->
+                <!-- Global Audit Table -->
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-6">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4">Community Activity Log</h3>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse">
                             <thead>
                                 <tr class="border-b border-slate-200 text-xs font-semibold text-slate-400 uppercase bg-slate-50">
                                     <th class="py-3 px-3">Member</th>
-                                    <th class="py-3 px-3">Task Description</th>
+                                    <th class="py-3 px-3">Task</th>
                                     <th class="py-3 px-3">Category</th>
-                                    <th class="py-3 px-3">Work Type</th>
                                     <th class="py-3 px-3">Date</th>
                                     <th class="py-3 px-3">Duration</th>
-                                    <th class="py-3 px-3 text-right">Admin Actions</th>
+                                    <th class="py-3 px-3 text-right">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody id="adminActivityTable" class="divide-y divide-slate-100 text-xs">
-                                <!-- Populated dynamically -->
-                            </tbody>
+                            <tbody id="adminActivityTable" class="divide-y divide-slate-100 text-xs"></tbody>
                         </table>
                     </div>
                 </div>
-
-                <!-- Admin Management Grid -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-                    <!-- User Management & Profiles -->
-                    <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-6 space-y-4">
-                        <div class="flex justify-between items-center">
-                            <h3 class="text-base font-bold text-slate-800">User Profiles Management</h3>
-                            <button onclick="openCreateUserModal()" class="bg-slate-800 hover:bg-slate-900 text-white text-xs px-3 py-1.5 rounded-lg font-bold transition cursor-pointer">
-                                <i class="fa-solid fa-user-plus mr-1"></i> Add Member
-                            </button>
-                        </div>
-
-                        <div class="overflow-x-auto max-h-72 overflow-y-auto">
-                            <table class="w-full text-left border-collapse">
-                                <thead>
-                                    <tr class="border-b border-slate-200 text-xs font-semibold text-slate-400 uppercase">
-                                        <th class="pb-2">Name / Email</th>
-                                        <th class="pb-2">Role</th>
-                                        <th class="pb-2">Status</th>
-                                        <th class="pb-2 text-right">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="adminUserProfilesTable" class="divide-y divide-slate-100 text-xs">
-                                    <!-- Dynamically loaded -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- Category & Tag Management -->
-                    <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-6 space-y-4">
-                        <div class="flex justify-between items-center">
-                            <h3 class="text-base font-bold text-slate-800">Project Categories & Domains</h3>
-                            <button onclick="openAddCategoryModal()" class="bg-slate-800 hover:bg-slate-900 text-white text-xs px-3 py-1.5 rounded-lg font-bold transition cursor-pointer">
-                                <i class="fa-solid fa-folder-plus mr-1"></i> New Category
-                            </button>
-                        </div>
-
-                        <div id="adminCategoriesList" class="space-y-2 max-h-72 overflow-y-auto pr-1">
-                            <!-- Dynamically loaded categories -->
-                        </div>
-                    </div>
-
-                </div>
-
-                <!-- System Backup & Export -->
-                <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-6">
-                    <h3 class="text-base font-bold text-slate-800 mb-2">Community Data Management & Backup</h3>
-                    <p class="text-xs text-slate-500 mb-4">Export all community logs for off-site reporting, restore from JSON backups, or reset system state.</p>
-
-                    <div class="flex flex-wrap gap-3">
-                        <button onclick="exportAllCommunityCSV()" class="bg-emerald-700 hover:bg-emerald-800 text-white text-xs px-4 py-2 rounded-lg font-bold transition cursor-pointer flex items-center gap-2">
-                            <i class="fa-solid fa-file-excel"></i> Export All to CSV
-                        </button>
-                        <button onclick="exportAllCommunityJSON()" class="bg-slate-800 hover:bg-slate-900 text-white text-xs px-4 py-2 rounded-lg font-bold transition cursor-pointer flex items-center gap-2">
-                            <i class="fa-solid fa-file-code"></i> Export Full JSON Backup
-                        </button>
-                        <label class="bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs px-4 py-2 rounded-lg font-bold transition cursor-pointer flex items-center gap-2 border border-slate-300">
-                            <i class="fa-solid fa-file-import"></i> Restore JSON Backup
-                            <input type="file" id="importJsonInput" accept=".json" onchange="importCommunityJSON(event)" class="hidden">
-                        </label>
-                        <button onclick="resetToSampleData()" class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs px-4 py-2 rounded-lg font-bold transition cursor-pointer ml-auto">
-                            <i class="fa-solid fa-rotate-left mr-1"></i> Reset to Demo Data
-                        </button>
-                    </div>
-                </div>
-
             </div>
 
         </div>
-
     </main>
 
-    <!-- MODAL DIALOGS -->
-
-    <!-- User Profile Create Modal -->
-    <div id="userModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
-        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4">
-            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-                <h3 id="userModalTitle" class="text-lg font-bold text-slate-800">Create Member Profile</h3>
-                <button onclick="closeModal('userModal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
-            </div>
-            <form onsubmit="saveUserProfile(event)" class="space-y-3 text-xs">
-                <input type="hidden" id="modalUserId">
-                <div>
-                    <label class="block font-semibold text-slate-600 mb-1">Full Name</label>
-                    <input type="text" id="modalUserName" required placeholder="Member Name" class="w-full p-2.5 border border-slate-300 rounded-lg text-xs">
-                </div>
-                <div>
-                    <label class="block font-semibold text-slate-600 mb-1">Username / Email Prefix</label>
-                    <div class="flex items-center">
-                        <input type="text" id="modalUserPrefix" required placeholder="username" class="w-full p-2.5 border border-slate-300 rounded-l-lg text-xs">
-                        <span class="bg-slate-100 border border-l-0 border-slate-300 px-3 py-2.5 rounded-r-lg text-slate-500 font-mono text-xs">@siriuscommunity.org</span>
-                    </div>
-                </div>
-                <div>
-                    <label class="block font-semibold text-slate-600 mb-1">Initial / Temporary Password</label>
-                    <input type="text" id="modalUserPassword" required class="w-full p-2.5 border border-slate-300 rounded-lg text-xs font-mono">
-                </div>
-                <div class="flex items-center gap-2 pt-1">
-                    <input type="checkbox" id="modalForcePasswordChange" class="rounded text-emerald-600">
-                    <label for="modalForcePasswordChange" class="text-xs text-slate-600">Require user to change password on next login</label>
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block font-semibold text-slate-600 mb-1">Role</label>
-                        <select id="modalUserRole" class="w-full p-2.5 border border-slate-300 rounded-lg text-xs">
-                            <option value="resident">Resident Member</option>
-                            <option value="admin">Administrator</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="flex justify-end gap-2 pt-3">
-                    <button type="button" onclick="closeModal('userModal')" class="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg font-bold">Cancel</button>
-                    <button type="submit" class="px-4 py-2 bg-emerald-700 text-white rounded-lg font-bold">Save Profile</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Category Modal -->
-    <div id="categoryModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
-        <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 space-y-4">
-            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-                <h3 class="text-base font-bold text-slate-800">Add New Category</h3>
-                <button onclick="closeModal('categoryModal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="space-y-3 text-xs">
-                <div>
-                    <label class="block font-semibold text-slate-600 mb-1">Category Name</label>
-                    <input type="text" id="newCategoryNameInput" placeholder="e.g. Forest Management" class="w-full p-2.5 border border-slate-300 rounded-lg text-xs">
-                </div>
-                <div class="flex justify-end gap-2 pt-2">
-                    <button onclick="closeModal('categoryModal')" class="px-3 py-1.5 bg-slate-100 text-slate-700 rounded-lg font-bold">Cancel</button>
-                    <button onclick="saveNewCategory()" class="px-3 py-1.5 bg-emerald-700 text-white rounded-lg font-bold">Add Category</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Confirmation Modal with auto-scroll fix for Google Sites -->
+    <!-- CONFIRMATION MODAL -->
     <div id="confirmModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 text-center space-y-4">
             <div class="w-12 h-12 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto text-xl">
                 <i class="fa-solid fa-triangle-exclamation"></i>
             </div>
             <div>
-                <h4 id="confirmTitle" class="text-base font-bold text-slate-900">Confirm Action</h4>
-                <p id="confirmMessage" class="text-xs text-slate-500 mt-1">Are you sure you want to proceed?</p>
+                <h4 id="confirmTitle" class="text-base font-bold text-slate-900">Delete Entry</h4>
+                <p id="confirmMessage" class="text-xs text-slate-500 mt-1">Are you sure you want to delete this log?</p>
             </div>
             <div class="flex gap-2 pt-2">
                 <button onclick="closeConfirmModal()" class="flex-1 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg text-xs cursor-pointer">Cancel</button>
@@ -511,13 +192,10 @@
         </div>
     </div>
 
-    <!-- APPLICATION JAVASCRIPT LOGIC -->
     <script>
-        const DOMAIN = '@siriuscommunity.org';
-
         const DEFAULT_USERS = [
-            { id: 'u1', email: 'valico@siriuscommunity.org', name: 'Valentin Covali', role: 'admin', password: 'sirius123', isFirstLogin: false },
-            { id: 'u2', email: 'resident@siriuscommunity.org', name: 'Community Resident', role: 'resident', password: 'sirius123', isFirstLogin: false }
+            { id: 'u1', email: 'valico@siriuscommunity.org', name: 'Valentin Covali', role: 'admin', password: 'sirius123' },
+            { id: 'u2', email: 'resident@siriuscommunity.org', name: 'Community Resident', role: 'resident', password: 'sirius123' }
         ];
 
         const DEFAULT_CATEGORIES = [
@@ -525,33 +203,43 @@
             'Kitchen & Community Meals',
             'Eco-Building & Solar',
             'Governance & Circle Meetings',
-            'Education & Guest Workshops',
-            'Joyful Productivity (Saturday Duty)'
+            'Education & Guest Workshops'
         ];
 
         const DEFAULT_ENTRIES = [
-            { id: 'e1', userId: 'u1', task: 'Solar Inverter Maintenance & Audit', category: 'Eco-Building & Solar', workType: 'Staff / Paid', date: '2026-03-28', hours: 3.5 },
-            { id: 'e2', userId: 'u1', task: 'Community IT Server Setup', category: 'Governance & Circle Meetings', workType: 'Volunteer / Duty', date: '2026-03-29', hours: 2.0 },
-            { id: 'e3', userId: 'u2', task: 'Spring Planting in Greenhouse', category: 'Organic Farm & Permaculture', workType: 'Volunteer / Duty', date: '2026-03-29', hours: 4.0 }
+            { id: 'e1', userId: 'u1', task: 'Solar Inverter Maintenance', category: 'Eco-Building & Solar', date: '2026-03-28', hours: 3.5 },
+            { id: 'e2', userId: 'u2', task: 'Spring Planting in Greenhouse', category: 'Organic Farm & Permaculture', date: '2026-03-29', hours: 4.0 }
         ];
 
-        let users = JSON.parse(localStorage.getItem('sirius_users')) || DEFAULT_USERS;
-        let categories = JSON.parse(localStorage.getItem('sirius_categories')) || DEFAULT_CATEGORIES;
-        let entries = JSON.parse(localStorage.getItem('sirius_entries')) || DEFAULT_ENTRIES;
-        let currentUser = JSON.parse(localStorage.getItem('sirius_current_user')) || null;
+        // Safe Load Logic (Ensures default data is ALWAYS loaded if storage is empty)
+        let users = DEFAULT_USERS;
+        let categories = DEFAULT_CATEGORIES;
+        let entries = DEFAULT_ENTRIES;
+        let currentUser = null;
+
+        try {
+            const storedUsers = localStorage.getItem('sirius_users');
+            if (storedUsers) users = JSON.parse(storedUsers);
+
+            const storedCat = localStorage.getItem('sirius_categories');
+            if (storedCat) categories = JSON.parse(storedCat);
+
+            const storedEntries = localStorage.getItem('sirius_entries');
+            if (storedEntries) entries = JSON.parse(storedEntries);
+
+            const storedUser = localStorage.getItem('sirius_current_user');
+            if (storedUser) currentUser = JSON.parse(storedUser);
+        } catch (e) {
+            console.log('Using default in-memory storage fallback');
+        }
 
         let timerInterval = null;
         let timerSeconds = 0;
         let isTimerRunning = false;
-        let categoryChartInstance = null;
-        let userContribChartInstance = null;
 
         window.addEventListener('DOMContentLoaded', () => {
             saveData();
-            document.getElementById('manualDate').value = new Date().toISOString().split('T')[0];
-            
             if (currentUser) {
-                currentUser = users.find(u => u.email === currentUser.email) || currentUser;
                 showDashboard();
             } else {
                 showLogin();
@@ -559,21 +247,22 @@
         });
 
         function saveData() {
-            localStorage.setItem('sirius_users', JSON.stringify(users));
-            localStorage.setItem('sirius_categories', JSON.stringify(categories));
-            localStorage.setItem('sirius_entries', JSON.stringify(entries));
-            if (currentUser) {
-                localStorage.setItem('sirius_current_user', JSON.stringify(currentUser));
-            } else {
-                localStorage.removeItem('sirius_current_user');
-            }
+            try {
+                localStorage.setItem('sirius_users', JSON.stringify(users));
+                localStorage.setItem('sirius_categories', JSON.stringify(categories));
+                localStorage.setItem('sirius_entries', JSON.stringify(entries));
+                if (currentUser) {
+                    localStorage.setItem('sirius_current_user', JSON.stringify(currentUser));
+                } else {
+                    localStorage.removeItem('sirius_current_user');
+                }
+            } catch (e) {}
         }
 
-        // AUTHENTICATION LOGIC
         function handleLogin(e) {
             e.preventDefault();
             const emailInput = document.getElementById('loginEmail').value.trim().toLowerCase();
-            const passwordInput = document.getElementById('loginPassword').value;
+            const passwordInput = document.getElementById('loginPassword').value.trim();
             const errorDiv = document.getElementById('loginError');
 
             errorDiv.classList.add('hidden');
@@ -583,43 +272,10 @@
             if (foundUser) {
                 currentUser = foundUser;
                 saveData();
-
-                if (foundUser.isFirstLogin) {
-                    showPasswordSetup(foundUser.id);
-                } else {
-                    showDashboard();
-                }
-            } else {
-                errorDiv.innerText = "Invalid email or password. Email must belong to @siriuscommunity.org";
-                errorDiv.classList.remove('hidden');
-            }
-        }
-
-        function showPasswordSetup(userId) {
-            document.getElementById('loginView').classList.add('hidden');
-            document.getElementById('passwordSetupView').classList.remove('hidden');
-            document.getElementById('setupUserId').value = userId;
-        }
-
-        function handlePasswordSetup(e) {
-            e.preventDefault();
-            const userId = document.getElementById('setupUserId').value;
-            const p1 = document.getElementById('newPermanentPassword').value;
-            const p2 = document.getElementById('confirmPermanentPassword').value;
-
-            if (p1 !== p2) {
-                alert('Passwords do not match.');
-                return;
-            }
-
-            const userIndex = users.findIndex(u => u.id === userId);
-            if (userIndex !== -1) {
-                users[userIndex].password = p1;
-                users[userIndex].isFirstLogin = false;
-                currentUser = users[userIndex];
-                saveData();
-                alert('Password successfully configured!');
                 showDashboard();
+            } else {
+                errorDiv.innerText = "Invalid credentials. Please use default login details.";
+                errorDiv.classList.remove('hidden');
             }
         }
 
@@ -632,334 +288,194 @@
         function showLogin() {
             document.getElementById('loginView').classList.remove('hidden');
             document.getElementById('dashboardView').classList.add('hidden');
-            document.getElementById('passwordSetupView').classList.add('hidden');
             document.getElementById('authHeaderArea').innerHTML = '';
             document.getElementById('credentialsTip').style.display = 'flex';
         }
 
         function showDashboard() {
             document.getElementById('loginView').classList.add('hidden');
-            document.getElementById('passwordSetupView').classList.add('hidden');
             document.getElementById('dashboardView').classList.remove('hidden');
             document.getElementById('credentialsTip').style.display = 'none';
 
             renderAuthHeader();
-            
+
             if (currentUser.role === 'admin') {
                 document.getElementById('tabAdminBtn').style.display = 'flex';
-                document.getElementById('adminTabBadge').classList.remove('hidden');
             } else {
                 document.getElementById('tabAdminBtn').style.display = 'none';
             }
 
             switchTab('user');
-            populateCategoryDropdowns();
-            renderUserWorkstation();
-            renderAdminDashboard();
+            populateCategories();
+            renderUserTable();
+            renderAdminTable();
         }
 
         function renderAuthHeader() {
-            const area = document.getElementById('authHeaderArea');
-            area.innerHTML = `
+            document.getElementById('authHeaderArea').innerHTML = `
                 <div class="text-right hidden sm:block">
                     <div class="text-xs font-bold">${currentUser.name}</div>
                     <div class="text-[10px] text-emerald-300 uppercase">${currentUser.role}</div>
                 </div>
-                <button onclick="logout()" class="bg-emerald-800 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer flex items-center gap-1 border border-emerald-700">
-                    <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+                <button onclick="logout()" class="bg-emerald-800 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer border border-emerald-700">
+                    Sign Out
                 </button>
             `;
         }
 
-        // NAVIGATION TABS
-        function switchTab(tabName) {
-            const userBtn = document.getElementById('tabUserBtn');
-            const adminBtn = document.getElementById('tabAdminBtn');
-            const userTab = document.getElementById('userTab');
-            const adminTab = document.getElementById('adminTab');
+        function switchTab(tab) {
+            const uBtn = document.getElementById('tabUserBtn');
+            const aBtn = document.getElementById('tabAdminBtn');
+            const uTab = document.getElementById('userTab');
+            const aTab = document.getElementById('adminTab');
 
-            if (tabName === 'user') {
-                userBtn.className = "flex-1 py-3 px-4 font-semibold text-sm rounded-lg flex items-center justify-center gap-2 transition cursor-pointer bg-emerald-700 text-white shadow-xs";
-                adminBtn.className = "flex-1 py-3 px-4 font-semibold text-sm rounded-lg flex items-center justify-center gap-2 transition cursor-pointer text-slate-600 hover:text-slate-900 hover:bg-slate-100";
-                userTab.classList.remove('hidden');
-                adminTab.classList.add('hidden');
-                renderUserWorkstation();
-            } else if (tabName === 'admin' && currentUser.role === 'admin') {
-                adminBtn.className = "flex-1 py-3 px-4 font-semibold text-sm rounded-lg flex items-center justify-center gap-2 transition cursor-pointer bg-emerald-700 text-white shadow-xs";
-                userBtn.className = "flex-1 py-3 px-4 font-semibold text-sm rounded-lg flex items-center justify-center gap-2 transition cursor-pointer text-slate-600 hover:text-slate-900 hover:bg-slate-100";
-                adminTab.classList.remove('hidden');
-                userTab.classList.add('hidden');
-                renderAdminDashboard();
+            if (tab === 'user') {
+                uBtn.className = "flex-1 py-3 px-4 font-semibold text-sm rounded-lg flex items-center justify-center gap-2 transition cursor-pointer bg-emerald-700 text-white shadow-xs";
+                aBtn.className = "flex-1 py-3 px-4 font-semibold text-sm rounded-lg flex items-center justify-center gap-2 transition cursor-pointer text-slate-600 hover:text-slate-900 hover:bg-slate-100";
+                uTab.classList.remove('hidden');
+                aTab.classList.add('hidden');
+            } else {
+                aBtn.className = "flex-1 py-3 px-4 font-semibold text-sm rounded-lg flex items-center justify-center gap-2 transition cursor-pointer bg-emerald-700 text-white shadow-xs";
+                uBtn.className = "flex-1 py-3 px-4 font-semibold text-sm rounded-lg flex items-center justify-center gap-2 transition cursor-pointer text-slate-600 hover:text-slate-900 hover:bg-slate-100";
+                aTab.classList.remove('hidden');
+                uTab.classList.add('hidden');
+                renderAdminTable();
             }
         }
 
-        function populateCategoryDropdowns() {
-            const selects = [document.getElementById('timerCategory'), document.getElementById('manualCategory'), document.getElementById('adminFilterCategory')];
-            selects.forEach(sel => {
-                if (!sel) return;
-                const currentVal = sel.value;
-                const isFilter = sel.id === 'adminFilterCategory';
-                
-                sel.innerHTML = isFilter ? '<option value="ALL">All Categories</option>' : '';
-                categories.forEach(cat => {
-                    const opt = document.createElement('option');
-                    opt.value = cat;
-                    opt.innerText = cat;
-                    sel.appendChild(opt);
-                });
-                if (currentVal) sel.value = currentVal;
+        function populateCategories() {
+            const sel = document.getElementById('timerCategory');
+            sel.innerHTML = '';
+            categories.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c;
+                opt.innerText = c;
+                sel.appendChild(opt);
             });
         }
 
-        // LIVE TIMER
         function toggleTimer() {
-            const taskInput = document.getElementById('timerTask');
+            const task = document.getElementById('timerTask').value.trim();
             if (!isTimerRunning) {
-                if (!taskInput.value.trim()) {
-                    alert('Please enter a task description before starting the timer.');
-                    taskInput.focus();
+                if (!task) {
+                    alert('Enter task description first');
                     return;
                 }
                 isTimerRunning = true;
-                document.getElementById('timerToggleIcon').className = "fa-solid fa-square";
                 document.getElementById('timerToggleText').innerText = "Stop & Save";
-                document.getElementById('timerToggleBtn').className = "flex-1 py-2.5 px-4 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-lg shadow-xs transition flex items-center justify-center gap-2 cursor-pointer";
-                document.getElementById('timerPauseBtn').classList.remove('hidden');
-                document.getElementById('timerStatus').innerText = "Timer running...";
-
+                document.getElementById('timerToggleBtn').className = "w-full py-2.5 px-4 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-lg shadow-xs transition flex items-center justify-center gap-2 cursor-pointer";
+                
                 timerInterval = setInterval(() => {
                     timerSeconds++;
-                    updateTimerDisplay();
+                    const h = String(Math.floor(timerSeconds / 3600)).padStart(2, '0');
+                    const m = String(Math.floor((timerSeconds % 3600) / 60)).padStart(2, '0');
+                    const s = String(timerSeconds % 60).padStart(2, '0');
+                    document.getElementById('timerDisplay').innerText = `${h}:${m}:${s}`;
                 }, 1000);
             } else {
-                stopAndSaveTimer();
-            }
-        }
-
-        function pauseTimer() {
-            if (isTimerRunning) {
                 clearInterval(timerInterval);
                 isTimerRunning = false;
-                document.getElementById('timerToggleIcon').className = "fa-solid fa-play";
-                document.getElementById('timerToggleText').innerText = "Resume";
-                document.getElementById('timerToggleBtn').className = "flex-1 py-2.5 px-4 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-lg shadow-xs transition flex items-center justify-center gap-2 cursor-pointer";
-                document.getElementById('timerPauseBtn').classList.add('hidden');
-                document.getElementById('timerStatus').innerText = "Timer paused";
-            }
-        }
-
-        function updateTimerDisplay() {
-            const hrs = String(Math.floor(timerSeconds / 3600)).padStart(2, '0');
-            const mins = String(Math.floor((timerSeconds % 3600) / 60)).padStart(2, '0');
-            const secs = String(timerSeconds % 60).padStart(2, '0');
-            document.getElementById('timerDisplay').innerText = `${hrs}:${mins}:${secs}`;
-        }
-
-        function stopAndSaveTimer() {
-            clearInterval(timerInterval);
-            isTimerRunning = false;
-
-            const task = document.getElementById('timerTask').value.trim();
-            const category = document.getElementById('timerCategory').value;
-            const workType = document.getElementById('timerWorkType').value;
-            const hours = parseFloat((timerSeconds / 3600).toFixed(2));
-
-            if (hours >= 0.02 && task) {
-                entries.unshift({
-                    id: 'e_' + Date.now(),
-                    userId: currentUser.id,
-                    task: task,
-                    category: category,
-                    workType: workType,
-                    date: new Date().toISOString().split('T')[0],
-                    hours: hours
-                });
-                saveData();
-                alert(`Successfully logged ${hours} hrs for "${task}"!`);
-            }
-
-            timerSeconds = 0;
-            updateTimerDisplay();
-            document.getElementById('timerTask').value = '';
-            document.getElementById('timerToggleIcon').className = "fa-solid fa-play";
-            document.getElementById('timerToggleText').innerText = "Start";
-            document.getElementById('timerToggleBtn').className = "flex-1 py-2.5 px-4 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-lg shadow-xs transition flex items-center justify-center gap-2 cursor-pointer";
-            document.getElementById('timerPauseBtn').classList.add('hidden');
-            document.getElementById('timerStatus').innerText = "Timer inactive";
-
-            renderUserWorkstation();
-        }
-
-        function toggleManualEntryForm() {
-            const form = document.getElementById('manualForm');
-            form.classList.toggle('hidden');
-        }
-
-        function saveManualEntry() {
-            const task = prompt("Enter task description for past work:");
-            if (!task || !task.trim()) return;
-
-            const date = document.getElementById('manualDate').value;
-            const hours = parseFloat(document.getElementById('manualHours').value);
-            const category = document.getElementById('manualCategory').value;
-
-            if (!date || isNaN(hours) || hours <= 0) {
-                alert('Please provide valid date and duration.');
-                return;
-            }
-
-            entries.unshift({
-                id: 'e_' + Date.now(),
-                userId: currentUser.id,
-                task: task.trim(),
-                category: category,
-                workType: 'Volunteer / Duty',
-                date: date,
-                hours: hours
-            });
-
-            saveData();
-            toggleManualEntryForm();
-            renderUserWorkstation();
-            alert('Past activity logged successfully!');
-        }
-
-        function renderUserWorkstation() {
-            const myEntries = entries.filter(e => e.userId === currentUser.id);
-            const tbody = document.getElementById('myEntriesTable');
-            tbody.innerHTML = '';
-
-            let totalLifetime = 0;
-            let weeklyTotal = 0;
-            const now = new Date();
-            const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-
-            myEntries.forEach(e => {
-                totalLifetime += e.hours;
-                const entryDate = new Date(e.date);
-                if (entryDate >= oneWeekAgo) {
-                    weeklyTotal += e.hours;
+                const hrs = parseFloat((timerSeconds / 3600).toFixed(2));
+                
+                if (hrs > 0) {
+                    entries.unshift({
+                        id: 'e_' + Date.now(),
+                        userId: currentUser.id,
+                        task: task,
+                        category: document.getElementById('timerCategory').value,
+                        date: new Date().toISOString().split('T')[0],
+                        hours: hrs
+                    });
+                    saveData();
                 }
 
+                timerSeconds = 0;
+                document.getElementById('timerDisplay').innerText = "00:00:00";
+                document.getElementById('timerTask').value = '';
+                document.getElementById('timerToggleText').innerText = "Start";
+                document.getElementById('timerToggleBtn').className = "w-full py-2.5 px-4 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-lg shadow-xs transition flex items-center justify-center gap-2 cursor-pointer";
+
+                renderUserTable();
+            }
+        }
+
+        function renderUserTable() {
+            const tbody = document.getElementById('myEntriesTable');
+            tbody.innerHTML = '';
+            const myEntries = entries.filter(e => e.userId === currentUser.id);
+
+            myEntries.forEach(e => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td class="py-2.5 px-2 font-medium text-slate-800">${e.task}</td>
                     <td class="py-2.5 px-2"><span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded text-[11px]">${e.category}</span></td>
-                    <td class="py-2.5 px-2 text-slate-500">${e.workType}</td>
                     <td class="py-2.5 px-2 font-mono text-slate-500">${e.date}</td>
                     <td class="py-2.5 px-2 font-bold text-emerald-700">${e.hours} hrs</td>
                     <td class="py-2.5 px-2 text-right">
-                        <button onclick="deleteMyEntry('${e.id}')" class="text-rose-500 hover:text-rose-700 cursor-pointer"><i class="fa-solid fa-trash"></i></button>
+                        <button onclick="deleteEntry('${e.id}')" class="text-rose-500 hover:text-rose-700 cursor-pointer"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
-
-            if (myEntries.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-slate-400">No activity logged yet. Start the timer above!</td></tr>`;
-            }
-
-            document.getElementById('userWeeklyHours').innerHTML = `${weeklyTotal.toFixed(1)} <span class="text-base font-normal text-slate-500">hrs logged</span>`;
-            document.getElementById('userTotalLifetimeHours').innerText = `Lifetime: ${totalLifetime.toFixed(1)} hrs`;
-            
-            const progress = Math.min(Math.round((weeklyTotal / 10) * 100), 100);
-            document.getElementById('weeklyProgressBar').style.width = `${progress}%`;
         }
 
-        function deleteMyEntry(id) {
-            showConfirm("Delete Activity Log", "Are you sure you want to delete this time entry?", () => {
-                entries = entries.filter(e => e.id !== id);
-                saveData();
-                renderUserWorkstation();
-                renderAdminDashboard();
-            });
-        }
-
-        function exportMyEntriesCSV() {
-            const myEntries = entries.filter(e => e.userId === currentUser.id);
-            let csv = 'Task,Category,WorkType,Date,Hours\n';
-            myEntries.forEach(e => {
-                csv += `"${e.task}","${e.category}","${e.workType}","${e.date}",${e.hours}\n`;
-            });
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `my_sirius_time_log_${currentUser.name.replace(/\s+/g, '_')}.csv`;
-            a.click();
-        }
-
-        // ADMIN DASHBOARD
-        function renderAdminDashboard() {
+        function renderAdminTable() {
             if (currentUser.role !== 'admin') return;
 
-            let totalCommunityHours = entries.reduce((acc, curr) => acc + curr.hours, 0);
-            document.getElementById('adminStatTotalHours').innerText = `${totalCommunityHours.toFixed(1)} hrs`;
+            const total = entries.reduce((acc, curr) => acc + curr.hours, 0);
+            document.getElementById('adminStatTotalHours').innerText = `${total.toFixed(1)} hrs`;
             document.getElementById('adminStatTotalUsers').innerText = users.length;
             document.getElementById('adminStatTotalTasks').innerText = entries.length;
-            document.getElementById('adminStatTotalCategories').innerText = categories.length;
-
-            renderAdminActivityTable();
-            renderUserProfilesTable();
-            renderAdminCategoriesList();
-            populateAdminFilterDropdowns();
-            renderCharts();
-        }
-
-        function populateAdminFilterDropdowns() {
-            const userSelect = document.getElementById('adminFilterUser');
-            const currentVal = userSelect.value;
-            userSelect.innerHTML = '<option value="ALL">All Community Members</option>';
-            users.forEach(u => {
-                const opt = document.createElement('option');
-                opt.value = u.id;
-                opt.innerText = `${u.name} (${u.email})`;
-                userSelect.appendChild(opt);
-            });
-            if (currentVal) userSelect.value = currentVal;
-        }
-
-        function renderAdminActivityTable() {
-            const filterUser = document.getElementById('adminFilterUser').value;
-            const filterCat = document.getElementById('adminFilterCategory').value;
-            const filterWorkType = document.getElementById('adminFilterWorkType').value;
-            const keyword = document.getElementById('adminSearchKeyword').value.toLowerCase();
 
             const tbody = document.getElementById('adminActivityTable');
             tbody.innerHTML = '';
 
-            let filtered = entries.filter(e => {
-                if (filterUser !== 'ALL' && e.userId !== filterUser) return false;
-                if (filterCat !== 'ALL' && e.category !== filterCat) return false;
-                if (filterWorkType !== 'ALL' && e.workType !== filterWorkType) return false;
-                if (keyword && !e.task.toLowerCase().includes(keyword)) return false;
-                return true;
-            });
-
-            filtered.forEach(e => {
-                const u = users.find(user => user.id === e.userId) || { name: 'Unknown Member', email: '' };
+            entries.forEach(e => {
+                const u = users.find(user => user.id === e.userId) || { name: 'Unknown' };
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td class="py-2.5 px-3 font-semibold text-slate-800">${u.name}<br><span class="text-[10px] font-mono text-slate-400">${u.email}</span></td>
+                    <td class="py-2.5 px-3 font-semibold text-slate-800">${u.name}</td>
                     <td class="py-2.5 px-3 text-slate-700">${e.task}</td>
                     <td class="py-2.5 px-3"><span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded text-[11px]">${e.category}</span></td>
-                    <td class="py-2.5 px-3 text-slate-500">${e.workType}</td>
                     <td class="py-2.5 px-3 font-mono text-slate-500">${e.date}</td>
                     <td class="py-2.5 px-3 font-bold text-emerald-700">${e.hours} hrs</td>
-                    <td class="py-2.5 px-3 text-right space-x-2">
-                        <button onclick="adminDeleteEntry('${e.id}')" class="text-rose-500 hover:text-rose-700 cursor-pointer" title="Delete Entry"><i class="fa-solid fa-trash"></i></button>
+                    <td class="py-2.5 px-3 text-right">
+                        <button onclick="deleteEntry('${e.id}')" class="text-rose-500 hover:text-rose-700 cursor-pointer"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
-
-            if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="py-6 text-center text-slate-400">No matching activity records found.</td></tr>`;
-            }
         }
 
-        function adminDeleteEntry(id) {
-            showConfirm("Admin Delete Entry", "Are you sure you want to delete this record?", () => {
+        function deleteEntry(id) {
+            showConfirm("Delete Log", "Delete this time entry?", () => {
                 entries = entries.filter(e => e.id !== id);
                 saveData();
-                renderAdmin
+                renderUserTable();
+                renderAdminTable();
+            });
+        }
+
+        function showConfirm(title, message, onYes) {
+            document.getElementById('confirmTitle').innerText = title;
+            document.getElementById('confirmMessage').innerText = message;
+            
+            const yesBtn = document.getElementById('confirmYesBtn');
+            const newYesBtn = yesBtn.cloneNode(true);
+            yesBtn.parentNode.replaceChild(newYesBtn, yesBtn);
+            
+            newYesBtn.onclick = function() {
+                closeConfirmModal();
+                onYes();
+            };
+
+            document.getElementById('confirmModal').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('confirmModal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
