@@ -71,6 +71,7 @@
                     <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Password</label>
                     <input type="password" id="loginPassword" required value="sirius123" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
                 </div>
+                <div id="loginError" class="hidden text-xs text-rose-600 bg-rose-50 p-2.5 rounded-lg border border-rose-200"></div>
                 <button type="submit" class="w-full py-3 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-lg shadow-md transition cursor-pointer">
                     Sign In
                 </button>
@@ -91,11 +92,11 @@
                 <input type="hidden" id="setupUserId">
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">New Permanent Password</label>
-                    <input type="password" id="newPermanentPassword" required minlength="6" placeholder="At least 6 characters" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    <input type="password" id="newPermanentPassword" required minlength="4" placeholder="At least 4 characters" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Confirm New Password</label>
-                    <input type="password" id="confirmPermanentPassword" required minlength="6" placeholder="Repeat new password" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    <input type="password" id="confirmPermanentPassword" required minlength="4" placeholder="Repeat new password" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
                 </div>
                 <button type="submit" class="w-full py-3 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-lg shadow-md transition cursor-pointer">
                     Set Password & Continue
@@ -129,7 +130,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
                         <div class="md:col-span-4">
                             <label class="block text-xs font-medium text-slate-500 mb-1">Task Description</label>
-                            <input type="text" id="timerTask" placeholder="e.g. Garden harvesting, kitchen duty, solar setup..." class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                            <input type="text" id="timerTask" placeholder="e.g. Garden harvesting, kitchen duty..." class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
                         </div>
 
                         <div class="md:col-span-3">
@@ -299,13 +300,7 @@
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div>
                             <h3 class="text-lg font-bold text-slate-800">Detailed Member Activity Inspection</h3>
-                            <p class="text-xs text-slate-500">View complete timeline, start/end timestamps, and detailed records for any user</p>
-                        </div>
-
-                        <div class="flex gap-2">
-                            <button onclick="openAddEntryModal()" class="bg-emerald-700 hover:bg-emerald-800 text-white text-xs px-3 py-2 rounded-lg font-bold transition cursor-pointer flex items-center gap-1">
-                                <i class="fa-solid fa-plus"></i> Add Entry for User
-                            </button>
+                            <p class="text-xs text-slate-500">View complete timeline, timestamps, and detailed records for any user</p>
                         </div>
                     </div>
 
@@ -434,7 +429,7 @@
 
     <!-- MODAL DIALOGS -->
 
-    <!-- User Profile Create/Edit Modal -->
+    <!-- User Profile Create Modal -->
     <div id="userModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4">
             <div class="flex justify-between items-center border-b border-slate-100 pb-3">
@@ -479,6 +474,26 @@
         </div>
     </div>
 
+    <!-- Category Modal -->
+    <div id="categoryModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h3 class="text-base font-bold text-slate-800">Add New Category</h3>
+                <button onclick="closeModal('categoryModal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="block font-semibold text-slate-600 mb-1">Category Name</label>
+                    <input type="text" id="newCategoryNameInput" placeholder="e.g. Forest Management" class="w-full p-2.5 border border-slate-300 rounded-lg text-xs">
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button onclick="closeModal('categoryModal')" class="px-3 py-1.5 bg-slate-100 text-slate-700 rounded-lg font-bold">Cancel</button>
+                    <button onclick="saveNewCategory()" class="px-3 py-1.5 bg-emerald-700 text-white rounded-lg font-bold">Add Category</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Confirmation Modal with auto-scroll fix for Google Sites -->
     <div id="confirmModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 text-center space-y-4">
@@ -490,36 +505,461 @@
                 <p id="confirmMessage" class="text-xs text-slate-500 mt-1">Are you sure you want to proceed?</p>
             </div>
             <div class="flex gap-2 pt-2">
-                <button onclick="closeConfirmModal(false)" class="flex-1 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg text-xs cursor-pointer">Cancel</button>
+                <button onclick="closeConfirmModal()" class="flex-1 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg text-xs cursor-pointer">Cancel</button>
                 <button id="confirmYesBtn" class="flex-1 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-lg text-xs cursor-pointer">Delete</button>
             </div>
         </div>
     </div>
 
+    <!-- APPLICATION JAVASCRIPT LOGIC -->
     <script>
-        // Добавьте эту функцию вызова с автопрокруткой экрана в начало видимой зоны iframe
-        function showConfirm(title, message, onYes) {
-            document.getElementById('confirmTitle').innerText = title;
-            document.getElementById('confirmMessage').innerText = message;
-            
-            const yesBtn = document.getElementById('confirmYesBtn');
-            // Клонируем кнопку чтобы сбросить старые события
-            const newYesBtn = yesBtn.cloneNode(true);
-            yesBtn.parentNode.replaceChild(newYesBtn, yesBtn);
-            
-            newYesBtn.onclick = function() {
-                closeConfirmModal(false);
-                onYes();
-            };
+        const DOMAIN = '@siriuscommunity.org';
 
-            document.getElementById('confirmModal').classList.remove('hidden');
-            // Прокручиваем страницу вверх внутри iframe, чтобы окно подтверждения было видно
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+        const DEFAULT_USERS = [
+            { id: 'u1', email: 'valico@siriuscommunity.org', name: 'Valentin Covali', role: 'admin', password: 'sirius123', isFirstLogin: false },
+            { id: 'u2', email: 'resident@siriuscommunity.org', name: 'Community Resident', role: 'resident', password: 'sirius123', isFirstLogin: false }
+        ];
+
+        const DEFAULT_CATEGORIES = [
+            'Organic Farm & Permaculture',
+            'Kitchen & Community Meals',
+            'Eco-Building & Solar',
+            'Governance & Circle Meetings',
+            'Education & Guest Workshops',
+            'Joyful Productivity (Saturday Duty)'
+        ];
+
+        const DEFAULT_ENTRIES = [
+            { id: 'e1', userId: 'u1', task: 'Solar Inverter Maintenance & Audit', category: 'Eco-Building & Solar', workType: 'Staff / Paid', date: '2026-03-28', hours: 3.5 },
+            { id: 'e2', userId: 'u1', task: 'Community IT Server Setup', category: 'Governance & Circle Meetings', workType: 'Volunteer / Duty', date: '2026-03-29', hours: 2.0 },
+            { id: 'e3', userId: 'u2', task: 'Spring Planting in Greenhouse', category: 'Organic Farm & Permaculture', workType: 'Volunteer / Duty', date: '2026-03-29', hours: 4.0 }
+        ];
+
+        let users = JSON.parse(localStorage.getItem('sirius_users')) || DEFAULT_USERS;
+        let categories = JSON.parse(localStorage.getItem('sirius_categories')) || DEFAULT_CATEGORIES;
+        let entries = JSON.parse(localStorage.getItem('sirius_entries')) || DEFAULT_ENTRIES;
+        let currentUser = JSON.parse(localStorage.getItem('sirius_current_user')) || null;
+
+        let timerInterval = null;
+        let timerSeconds = 0;
+        let isTimerRunning = false;
+        let categoryChartInstance = null;
+        let userContribChartInstance = null;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            saveData();
+            document.getElementById('manualDate').value = new Date().toISOString().split('T')[0];
+            
+            if (currentUser) {
+                currentUser = users.find(u => u.email === currentUser.email) || currentUser;
+                showDashboard();
+            } else {
+                showLogin();
+            }
+        });
+
+        function saveData() {
+            localStorage.setItem('sirius_users', JSON.stringify(users));
+            localStorage.setItem('sirius_categories', JSON.stringify(categories));
+            localStorage.setItem('sirius_entries', JSON.stringify(entries));
+            if (currentUser) {
+                localStorage.setItem('sirius_current_user', JSON.stringify(currentUser));
+            } else {
+                localStorage.removeItem('sirius_current_user');
+            }
         }
 
-        function closeConfirmModal() {
-            document.getElementById('confirmModal').classList.add('hidden');
+        // AUTHENTICATION LOGIC
+        function handleLogin(e) {
+            e.preventDefault();
+            const emailInput = document.getElementById('loginEmail').value.trim().toLowerCase();
+            const passwordInput = document.getElementById('loginPassword').value;
+            const errorDiv = document.getElementById('loginError');
+
+            errorDiv.classList.add('hidden');
+
+            const foundUser = users.find(u => u.email.toLowerCase() === emailInput && u.password === passwordInput);
+
+            if (foundUser) {
+                currentUser = foundUser;
+                saveData();
+
+                if (foundUser.isFirstLogin) {
+                    showPasswordSetup(foundUser.id);
+                } else {
+                    showDashboard();
+                }
+            } else {
+                errorDiv.innerText = "Invalid email or password. Email must belong to @siriuscommunity.org";
+                errorDiv.classList.remove('hidden');
+            }
         }
-    </script>
-</body>
-</html>
+
+        function showPasswordSetup(userId) {
+            document.getElementById('loginView').classList.add('hidden');
+            document.getElementById('passwordSetupView').classList.remove('hidden');
+            document.getElementById('setupUserId').value = userId;
+        }
+
+        function handlePasswordSetup(e) {
+            e.preventDefault();
+            const userId = document.getElementById('setupUserId').value;
+            const p1 = document.getElementById('newPermanentPassword').value;
+            const p2 = document.getElementById('confirmPermanentPassword').value;
+
+            if (p1 !== p2) {
+                alert('Passwords do not match.');
+                return;
+            }
+
+            const userIndex = users.findIndex(u => u.id === userId);
+            if (userIndex !== -1) {
+                users[userIndex].password = p1;
+                users[userIndex].isFirstLogin = false;
+                currentUser = users[userIndex];
+                saveData();
+                alert('Password successfully configured!');
+                showDashboard();
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            saveData();
+            showLogin();
+        }
+
+        function showLogin() {
+            document.getElementById('loginView').classList.remove('hidden');
+            document.getElementById('dashboardView').classList.add('hidden');
+            document.getElementById('passwordSetupView').classList.add('hidden');
+            document.getElementById('authHeaderArea').innerHTML = '';
+            document.getElementById('credentialsTip').style.display = 'flex';
+        }
+
+        function showDashboard() {
+            document.getElementById('loginView').classList.add('hidden');
+            document.getElementById('passwordSetupView').classList.add('hidden');
+            document.getElementById('dashboardView').classList.remove('hidden');
+            document.getElementById('credentialsTip').style.display = 'none';
+
+            renderAuthHeader();
+            
+            if (currentUser.role === 'admin') {
+                document.getElementById('tabAdminBtn').style.display = 'flex';
+                document.getElementById('adminTabBadge').classList.remove('hidden');
+            } else {
+                document.getElementById('tabAdminBtn').style.display = 'none';
+            }
+
+            switchTab('user');
+            populateCategoryDropdowns();
+            renderUserWorkstation();
+            renderAdminDashboard();
+        }
+
+        function renderAuthHeader() {
+            const area = document.getElementById('authHeaderArea');
+            area.innerHTML = `
+                <div class="text-right hidden sm:block">
+                    <div class="text-xs font-bold">${currentUser.name}</div>
+                    <div class="text-[10px] text-emerald-300 uppercase">${currentUser.role}</div>
+                </div>
+                <button onclick="logout()" class="bg-emerald-800 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer flex items-center gap-1 border border-emerald-700">
+                    <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+                </button>
+            `;
+        }
+
+        // NAVIGATION TABS
+        function switchTab(tabName) {
+            const userBtn = document.getElementById('tabUserBtn');
+            const adminBtn = document.getElementById('tabAdminBtn');
+            const userTab = document.getElementById('userTab');
+            const adminTab = document.getElementById('adminTab');
+
+            if (tabName === 'user') {
+                userBtn.className = "flex-1 py-3 px-4 font-semibold text-sm rounded-lg flex items-center justify-center gap-2 transition cursor-pointer bg-emerald-700 text-white shadow-xs";
+                adminBtn.className = "flex-1 py-3 px-4 font-semibold text-sm rounded-lg flex items-center justify-center gap-2 transition cursor-pointer text-slate-600 hover:text-slate-900 hover:bg-slate-100";
+                userTab.classList.remove('hidden');
+                adminTab.classList.add('hidden');
+                renderUserWorkstation();
+            } else if (tabName === 'admin' && currentUser.role === 'admin') {
+                adminBtn.className = "flex-1 py-3 px-4 font-semibold text-sm rounded-lg flex items-center justify-center gap-2 transition cursor-pointer bg-emerald-700 text-white shadow-xs";
+                userBtn.className = "flex-1 py-3 px-4 font-semibold text-sm rounded-lg flex items-center justify-center gap-2 transition cursor-pointer text-slate-600 hover:text-slate-900 hover:bg-slate-100";
+                adminTab.classList.remove('hidden');
+                userTab.classList.add('hidden');
+                renderAdminDashboard();
+            }
+        }
+
+        function populateCategoryDropdowns() {
+            const selects = [document.getElementById('timerCategory'), document.getElementById('manualCategory'), document.getElementById('adminFilterCategory')];
+            selects.forEach(sel => {
+                if (!sel) return;
+                const currentVal = sel.value;
+                const isFilter = sel.id === 'adminFilterCategory';
+                
+                sel.innerHTML = isFilter ? '<option value="ALL">All Categories</option>' : '';
+                categories.forEach(cat => {
+                    const opt = document.createElement('option');
+                    opt.value = cat;
+                    opt.innerText = cat;
+                    sel.appendChild(opt);
+                });
+                if (currentVal) sel.value = currentVal;
+            });
+        }
+
+        // LIVE TIMER
+        function toggleTimer() {
+            const taskInput = document.getElementById('timerTask');
+            if (!isTimerRunning) {
+                if (!taskInput.value.trim()) {
+                    alert('Please enter a task description before starting the timer.');
+                    taskInput.focus();
+                    return;
+                }
+                isTimerRunning = true;
+                document.getElementById('timerToggleIcon').className = "fa-solid fa-square";
+                document.getElementById('timerToggleText').innerText = "Stop & Save";
+                document.getElementById('timerToggleBtn').className = "flex-1 py-2.5 px-4 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-lg shadow-xs transition flex items-center justify-center gap-2 cursor-pointer";
+                document.getElementById('timerPauseBtn').classList.remove('hidden');
+                document.getElementById('timerStatus').innerText = "Timer running...";
+
+                timerInterval = setInterval(() => {
+                    timerSeconds++;
+                    updateTimerDisplay();
+                }, 1000);
+            } else {
+                stopAndSaveTimer();
+            }
+        }
+
+        function pauseTimer() {
+            if (isTimerRunning) {
+                clearInterval(timerInterval);
+                isTimerRunning = false;
+                document.getElementById('timerToggleIcon').className = "fa-solid fa-play";
+                document.getElementById('timerToggleText').innerText = "Resume";
+                document.getElementById('timerToggleBtn').className = "flex-1 py-2.5 px-4 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-lg shadow-xs transition flex items-center justify-center gap-2 cursor-pointer";
+                document.getElementById('timerPauseBtn').classList.add('hidden');
+                document.getElementById('timerStatus').innerText = "Timer paused";
+            }
+        }
+
+        function updateTimerDisplay() {
+            const hrs = String(Math.floor(timerSeconds / 3600)).padStart(2, '0');
+            const mins = String(Math.floor((timerSeconds % 3600) / 60)).padStart(2, '0');
+            const secs = String(timerSeconds % 60).padStart(2, '0');
+            document.getElementById('timerDisplay').innerText = `${hrs}:${mins}:${secs}`;
+        }
+
+        function stopAndSaveTimer() {
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+
+            const task = document.getElementById('timerTask').value.trim();
+            const category = document.getElementById('timerCategory').value;
+            const workType = document.getElementById('timerWorkType').value;
+            const hours = parseFloat((timerSeconds / 3600).toFixed(2));
+
+            if (hours >= 0.02 && task) {
+                entries.unshift({
+                    id: 'e_' + Date.now(),
+                    userId: currentUser.id,
+                    task: task,
+                    category: category,
+                    workType: workType,
+                    date: new Date().toISOString().split('T')[0],
+                    hours: hours
+                });
+                saveData();
+                alert(`Successfully logged ${hours} hrs for "${task}"!`);
+            }
+
+            timerSeconds = 0;
+            updateTimerDisplay();
+            document.getElementById('timerTask').value = '';
+            document.getElementById('timerToggleIcon').className = "fa-solid fa-play";
+            document.getElementById('timerToggleText').innerText = "Start";
+            document.getElementById('timerToggleBtn').className = "flex-1 py-2.5 px-4 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-lg shadow-xs transition flex items-center justify-center gap-2 cursor-pointer";
+            document.getElementById('timerPauseBtn').classList.add('hidden');
+            document.getElementById('timerStatus').innerText = "Timer inactive";
+
+            renderUserWorkstation();
+        }
+
+        function toggleManualEntryForm() {
+            const form = document.getElementById('manualForm');
+            form.classList.toggle('hidden');
+        }
+
+        function saveManualEntry() {
+            const task = prompt("Enter task description for past work:");
+            if (!task || !task.trim()) return;
+
+            const date = document.getElementById('manualDate').value;
+            const hours = parseFloat(document.getElementById('manualHours').value);
+            const category = document.getElementById('manualCategory').value;
+
+            if (!date || isNaN(hours) || hours <= 0) {
+                alert('Please provide valid date and duration.');
+                return;
+            }
+
+            entries.unshift({
+                id: 'e_' + Date.now(),
+                userId: currentUser.id,
+                task: task.trim(),
+                category: category,
+                workType: 'Volunteer / Duty',
+                date: date,
+                hours: hours
+            });
+
+            saveData();
+            toggleManualEntryForm();
+            renderUserWorkstation();
+            alert('Past activity logged successfully!');
+        }
+
+        function renderUserWorkstation() {
+            const myEntries = entries.filter(e => e.userId === currentUser.id);
+            const tbody = document.getElementById('myEntriesTable');
+            tbody.innerHTML = '';
+
+            let totalLifetime = 0;
+            let weeklyTotal = 0;
+            const now = new Date();
+            const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+            myEntries.forEach(e => {
+                totalLifetime += e.hours;
+                const entryDate = new Date(e.date);
+                if (entryDate >= oneWeekAgo) {
+                    weeklyTotal += e.hours;
+                }
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="py-2.5 px-2 font-medium text-slate-800">${e.task}</td>
+                    <td class="py-2.5 px-2"><span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded text-[11px]">${e.category}</span></td>
+                    <td class="py-2.5 px-2 text-slate-500">${e.workType}</td>
+                    <td class="py-2.5 px-2 font-mono text-slate-500">${e.date}</td>
+                    <td class="py-2.5 px-2 font-bold text-emerald-700">${e.hours} hrs</td>
+                    <td class="py-2.5 px-2 text-right">
+                        <button onclick="deleteMyEntry('${e.id}')" class="text-rose-500 hover:text-rose-700 cursor-pointer"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            if (myEntries.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-slate-400">No activity logged yet. Start the timer above!</td></tr>`;
+            }
+
+            document.getElementById('userWeeklyHours').innerHTML = `${weeklyTotal.toFixed(1)} <span class="text-base font-normal text-slate-500">hrs logged</span>`;
+            document.getElementById('userTotalLifetimeHours').innerText = `Lifetime: ${totalLifetime.toFixed(1)} hrs`;
+            
+            const progress = Math.min(Math.round((weeklyTotal / 10) * 100), 100);
+            document.getElementById('weeklyProgressBar').style.width = `${progress}%`;
+        }
+
+        function deleteMyEntry(id) {
+            showConfirm("Delete Activity Log", "Are you sure you want to delete this time entry?", () => {
+                entries = entries.filter(e => e.id !== id);
+                saveData();
+                renderUserWorkstation();
+                renderAdminDashboard();
+            });
+        }
+
+        function exportMyEntriesCSV() {
+            const myEntries = entries.filter(e => e.userId === currentUser.id);
+            let csv = 'Task,Category,WorkType,Date,Hours\n';
+            myEntries.forEach(e => {
+                csv += `"${e.task}","${e.category}","${e.workType}","${e.date}",${e.hours}\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `my_sirius_time_log_${currentUser.name.replace(/\s+/g, '_')}.csv`;
+            a.click();
+        }
+
+        // ADMIN DASHBOARD
+        function renderAdminDashboard() {
+            if (currentUser.role !== 'admin') return;
+
+            let totalCommunityHours = entries.reduce((acc, curr) => acc + curr.hours, 0);
+            document.getElementById('adminStatTotalHours').innerText = `${totalCommunityHours.toFixed(1)} hrs`;
+            document.getElementById('adminStatTotalUsers').innerText = users.length;
+            document.getElementById('adminStatTotalTasks').innerText = entries.length;
+            document.getElementById('adminStatTotalCategories').innerText = categories.length;
+
+            renderAdminActivityTable();
+            renderUserProfilesTable();
+            renderAdminCategoriesList();
+            populateAdminFilterDropdowns();
+            renderCharts();
+        }
+
+        function populateAdminFilterDropdowns() {
+            const userSelect = document.getElementById('adminFilterUser');
+            const currentVal = userSelect.value;
+            userSelect.innerHTML = '<option value="ALL">All Community Members</option>';
+            users.forEach(u => {
+                const opt = document.createElement('option');
+                opt.value = u.id;
+                opt.innerText = `${u.name} (${u.email})`;
+                userSelect.appendChild(opt);
+            });
+            if (currentVal) userSelect.value = currentVal;
+        }
+
+        function renderAdminActivityTable() {
+            const filterUser = document.getElementById('adminFilterUser').value;
+            const filterCat = document.getElementById('adminFilterCategory').value;
+            const filterWorkType = document.getElementById('adminFilterWorkType').value;
+            const keyword = document.getElementById('adminSearchKeyword').value.toLowerCase();
+
+            const tbody = document.getElementById('adminActivityTable');
+            tbody.innerHTML = '';
+
+            let filtered = entries.filter(e => {
+                if (filterUser !== 'ALL' && e.userId !== filterUser) return false;
+                if (filterCat !== 'ALL' && e.category !== filterCat) return false;
+                if (filterWorkType !== 'ALL' && e.workType !== filterWorkType) return false;
+                if (keyword && !e.task.toLowerCase().includes(keyword)) return false;
+                return true;
+            });
+
+            filtered.forEach(e => {
+                const u = users.find(user => user.id === e.userId) || { name: 'Unknown Member', email: '' };
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="py-2.5 px-3 font-semibold text-slate-800">${u.name}<br><span class="text-[10px] font-mono text-slate-400">${u.email}</span></td>
+                    <td class="py-2.5 px-3 text-slate-700">${e.task}</td>
+                    <td class="py-2.5 px-3"><span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded text-[11px]">${e.category}</span></td>
+                    <td class="py-2.5 px-3 text-slate-500">${e.workType}</td>
+                    <td class="py-2.5 px-3 font-mono text-slate-500">${e.date}</td>
+                    <td class="py-2.5 px-3 font-bold text-emerald-700">${e.hours} hrs</td>
+                    <td class="py-2.5 px-3 text-right space-x-2">
+                        <button onclick="adminDeleteEntry('${e.id}')" class="text-rose-500 hover:text-rose-700 cursor-pointer" title="Delete Entry"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="py-6 text-center text-slate-400">No matching activity records found.</td></tr>`;
+            }
+        }
+
+        function adminDeleteEntry(id) {
+            showConfirm("Admin Delete Entry", "Are you sure you want to delete this record?", () => {
+                entries = entries.filter(e => e.id !== id);
+                saveData();
+                renderAdmin
