@@ -26,7 +26,7 @@
                 </div>
                 <div>
                     <span class="font-bold text-xl tracking-tight">Sirius Community</span>
-                    <span class="text-xs bg-emerald-800 text-emerald-200 px-2 py-0.5 rounded-full ml-2 border border-emerald-700">Time Tracker</span>
+                    <span class="text-xs bg-emerald-800 text-emerald-200 px-2 py-0.5 rounded-full ml-2 border border-emerald-700">Time & Service Tracker</span>
                 </div>
             </div>
 
@@ -95,13 +95,21 @@
                 <div class="bg-white rounded-2xl shadow-xs border border-slate-200 p-6">
                     <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">Live Activity Tracker</h2>
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
-                        <div class="md:col-span-5">
+                        <div class="md:col-span-4">
                             <label class="block text-xs font-medium text-slate-500 mb-1">Task Description</label>
                             <input type="text" id="timerTask" placeholder="Garden harvesting, kitchen duty..." class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
                         </div>
-                        <div class="md:col-span-4">
+                        <div class="md:col-span-3">
                             <label class="block text-xs font-medium text-slate-500 mb-1">Category</label>
                             <select id="timerCategory" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"></select>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-medium text-slate-500 mb-1">Work Type</label>
+                            <select id="timerWorkType" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                                <option value="Volunteer / Duty">Volunteer / Duty</option>
+                                <option value="Staff / Paid">Staff / Paid</option>
+                                <option value="Personal / Co-op">Personal / Co-op</option>
+                            </select>
                         </div>
                         <div class="md:col-span-3 flex flex-col items-center justify-end">
                             <div id="timerDisplay" class="text-3xl font-mono font-bold text-slate-800 mb-2">00:00:00</div>
@@ -122,6 +130,7 @@
                                 <tr class="border-b border-slate-200 text-xs font-semibold text-slate-400 uppercase">
                                     <th class="pb-3 px-2">Task</th>
                                     <th class="pb-3 px-2">Category</th>
+                                    <th class="pb-3 px-2">Type</th>
                                     <th class="pb-3 px-2">Date</th>
                                     <th class="pb-3 px-2">Duration</th>
                                     <th class="pb-3 px-2 text-right">Action</th>
@@ -136,7 +145,7 @@
             <!-- ADMIN TAB -->
             <div id="adminTab" class="hidden space-y-6">
                 <!-- Metrics -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
                     <div class="bg-emerald-800 text-white p-5 rounded-2xl shadow-xs">
                         <span class="text-xs font-bold uppercase text-emerald-200">Total Hours</span>
                         <div id="adminStatTotalHours" class="text-3xl font-extrabold mt-1">0.0 hrs</div>
@@ -149,11 +158,47 @@
                         <span class="text-xs font-bold uppercase text-slate-400">Total Entries</span>
                         <div id="adminStatTotalTasks" class="text-3xl font-bold text-slate-800 mt-1">0</div>
                     </div>
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
+                        <span class="text-xs font-bold uppercase text-slate-400">Categories</span>
+                        <div id="adminStatTotalCategories" class="text-3xl font-bold text-slate-800 mt-1">0</div>
+                    </div>
                 </div>
 
-                <!-- Global Audit Table -->
-                <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-6">
-                    <h3 class="text-lg font-bold text-slate-800 mb-4">Community Activity Log</h3>
+                <!-- Charts -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs">
+                        <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wide mb-4">Hours Distribution by Category</h3>
+                        <div class="h-64 flex items-center justify-center"><canvas id="categoryChart"></canvas></div>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs">
+                        <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wide mb-4">Top Member Contributors</h3>
+                        <div class="h-64 flex items-center justify-center"><canvas id="userContribChart"></canvas></div>
+                    </div>
+                </div>
+
+                <!-- Global Audit Table & Filters -->
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-6 space-y-4">
+                    <h3 class="text-lg font-bold text-slate-800">Community Activity & Audit</h3>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs">
+                        <div>
+                            <label class="block font-semibold text-slate-600 mb-1">Filter Member</label>
+                            <select id="adminFilterUser" onchange="renderAdminDashboard()" class="w-full p-2 bg-white border border-slate-300 rounded-lg">
+                                <option value="ALL">All Members</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-slate-600 mb-1">Filter Category</label>
+                            <select id="adminFilterCategory" onchange="renderAdminDashboard()" class="w-full p-2 bg-white border border-slate-300 rounded-lg">
+                                <option value="ALL">All Categories</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-slate-600 mb-1">Search Keyword</label>
+                            <input type="text" id="adminSearchKeyword" onkeyup="renderAdminDashboard()" placeholder="Search task..." class="w-full p-2 bg-white border border-slate-300 rounded-lg">
+                        </div>
+                    </div>
+
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse">
                             <thead>
@@ -161,6 +206,7 @@
                                     <th class="py-3 px-3">Member</th>
                                     <th class="py-3 px-3">Task</th>
                                     <th class="py-3 px-3">Category</th>
+                                    <th class="py-3 px-3">Type</th>
                                     <th class="py-3 px-3">Date</th>
                                     <th class="py-3 px-3">Duration</th>
                                     <th class="py-3 px-3 text-right">Actions</th>
@@ -170,72 +216,152 @@
                         </table>
                     </div>
                 </div>
+
+                <!-- Management Grid (Users & Categories) -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Users -->
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-6 space-y-4">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-base font-bold text-slate-800">User Profiles Management</h3>
+                            <button onclick="openCreateUserModal()" class="bg-slate-800 hover:bg-slate-900 text-white text-xs px-3 py-1.5 rounded-lg font-bold transition cursor-pointer">
+                                <i class="fa-solid fa-user-plus mr-1"></i> Add Member
+                            </button>
+                        </div>
+                        <div class="overflow-x-auto max-h-60 overflow-y-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="border-b border-slate-200 text-xs font-semibold text-slate-400 uppercase">
+                                        <th class="pb-2">Name / Email</th>
+                                        <th class="pb-2">Role</th>
+                                        <th class="pb-2 text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminUserProfilesTable" class="divide-y divide-slate-100 text-xs"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Categories -->
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-6 space-y-4">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-base font-bold text-slate-800">Project Categories</h3>
+                            <button onclick="openAddCategoryModal()" class="bg-slate-800 hover:bg-slate-900 text-white text-xs px-3 py-1.5 rounded-lg font-bold transition cursor-pointer">
+                                <i class="fa-solid fa-folder-plus mr-1"></i> New Category
+                            </button>
+                        </div>
+                        <div id="adminCategoriesList" class="space-y-2 max-h-60 overflow-y-auto pr-1"></div>
+                    </div>
+                </div>
+
+                <!-- Backup & Exports -->
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-6">
+                    <h3 class="text-base font-bold text-slate-800 mb-2">Community Data Management</h3>
+                    <p class="text-xs text-slate-500 mb-4">Export reports or back up system state.</p>
+                    <div class="flex flex-wrap gap-3">
+                        <button onclick="exportAllCSV()" class="bg-emerald-700 hover:bg-emerald-800 text-white text-xs px-4 py-2 rounded-lg font-bold transition cursor-pointer">
+                            <i class="fa-solid fa-file-excel mr-1"></i> Export All to CSV
+                        </button>
+                        <button onclick="exportAllJSON()" class="bg-slate-800 hover:bg-slate-900 text-white text-xs px-4 py-2 rounded-lg font-bold transition cursor-pointer">
+                            <i class="fa-solid fa-file-code mr-1"></i> Backup JSON
+                        </button>
+                        <button onclick="resetToSampleData()" class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs px-4 py-2 rounded-lg font-bold transition cursor-pointer ml-auto">
+                            <i class="fa-solid fa-rotate-left mr-1"></i> Reset Demo Data
+                        </button>
+                    </div>
+                </div>
             </div>
 
         </div>
     </main>
 
-    <!-- CONFIRMATION MODAL -->
-    <div id="confirmModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
-        <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 text-center space-y-4">
-            <div class="w-12 h-12 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto text-xl">
-                <i class="fa-solid fa-triangle-exclamation"></i>
-            </div>
-            <div>
-                <h4 id="confirmTitle" class="text-base font-bold text-slate-900">Delete Entry</h4>
-                <p id="confirmMessage" class="text-xs text-slate-500 mt-1">Are you sure you want to delete this log?</p>
-            </div>
-            <div class="flex gap-2 pt-2">
-                <button onclick="closeConfirmModal()" class="flex-1 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg text-xs cursor-pointer">Cancel</button>
-                <button id="confirmYesBtn" class="flex-1 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-lg text-xs cursor-pointer">Delete</button>
+    <!-- MODALS -->
+    <!-- Create User Modal -->
+    <div id="userModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4">
+            <h3 class="text-lg font-bold text-slate-800 border-b pb-2">Add Member Profile</h3>
+            <form onsubmit="saveUserProfile(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block font-semibold mb-1">Full Name</label>
+                    <input type="text" id="modalUserName" required class="w-full p-2.5 border border-slate-300 rounded-lg">
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">Email Prefix (@siriuscommunity.org)</label>
+                    <input type="text" id="modalUserPrefix" required placeholder="username" class="w-full p-2.5 border border-slate-300 rounded-lg">
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">Temporary Password</label>
+                    <input type="text" id="modalUserPassword" required value="sirius123" class="w-full p-2.5 border border-slate-300 rounded-lg font-mono">
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">Role</label>
+                    <select id="modalUserRole" class="w-full p-2.5 border border-slate-300 rounded-lg">
+                        <option value="resident">Resident Member</option>
+                        <option value="admin">Administrator</option>
+                    </select>
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeModal('userModal')" class="px-4 py-2 bg-slate-100 rounded-lg font-bold">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-emerald-700 text-white rounded-lg font-bold">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Category Modal -->
+    <div id="categoryModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 space-y-4">
+            <h3 class="text-base font-bold text-slate-800 border-b pb-2">Add Category</h3>
+            <input type="text" id="newCategoryNameInput" placeholder="Category Name" class="w-full p-2.5 border border-slate-300 rounded-lg text-xs">
+            <div class="flex justify-end gap-2">
+                <button onclick="closeModal('categoryModal')" class="px-3 py-1.5 bg-slate-100 rounded-lg font-bold text-xs">Cancel</button>
+                <button onclick="saveNewCategory()" class="px-3 py-1.5 bg-emerald-700 text-white rounded-lg font-bold text-xs">Add</button>
             </div>
         </div>
     </div>
 
+    <!-- CONFIRMATION MODAL -->
+    <div id="confirmModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 text-center space-y-4">
+            <div class="w-12 h-12 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto text-xl"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <h4 id="confirmTitle" class="text-base font-bold text-slate-900">Confirm</h4>
+            <p id="confirmMessage" class="text-xs text-slate-500">Are you sure?</p>
+            <div class="flex gap-2 pt-2">
+                <button onclick="closeConfirmModal()" class="flex-1 py-2 bg-slate-100 rounded-lg text-xs font-bold cursor-pointer">Cancel</button>
+                <button id="confirmYesBtn" class="flex-1 py-2 bg-rose-600 text-white rounded-lg text-xs font-bold cursor-pointer">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT LOGIC -->
     <script>
+        const DOMAIN = '@siriuscommunity.org';
         const DEFAULT_USERS = [
             { id: 'u1', email: 'valico@siriuscommunity.org', name: 'Valentin Covali', role: 'admin', password: 'sirius123' },
             { id: 'u2', email: 'resident@siriuscommunity.org', name: 'Community Resident', role: 'resident', password: 'sirius123' }
         ];
-
-        const DEFAULT_CATEGORIES = [
-            'Organic Farm & Permaculture',
-            'Kitchen & Community Meals',
-            'Eco-Building & Solar',
-            'Governance & Circle Meetings',
-            'Education & Guest Workshops'
-        ];
-
+        const DEFAULT_CATEGORIES = ['Organic Farm & Permaculture', 'Kitchen & Community Meals', 'Eco-Building & Solar', 'Governance & Circle Meetings', 'Education & Guest Workshops'];
         const DEFAULT_ENTRIES = [
-            { id: 'e1', userId: 'u1', task: 'Solar Inverter Maintenance', category: 'Eco-Building & Solar', date: '2026-03-28', hours: 3.5 },
-            { id: 'e2', userId: 'u2', task: 'Spring Planting in Greenhouse', category: 'Organic Farm & Permaculture', date: '2026-03-29', hours: 4.0 }
+            { id: 'e1', userId: 'u1', task: 'Solar Inverter Maintenance', category: 'Eco-Building & Solar', workType: 'Staff / Paid', date: '2026-03-28', hours: 3.5 },
+            { id: 'e2', userId: 'u2', task: 'Spring Planting in Greenhouse', category: 'Organic Farm & Permaculture', workType: 'Volunteer / Duty', date: '2026-03-29', hours: 4.0 }
         ];
 
-        // Safe Load Logic (Ensures default data is ALWAYS loaded if storage is empty)
         let users = DEFAULT_USERS;
         let categories = DEFAULT_CATEGORIES;
         let entries = DEFAULT_ENTRIES;
         let currentUser = null;
 
-        try {
-            const storedUsers = localStorage.getItem('sirius_users');
-            if (storedUsers) users = JSON.parse(storedUsers);
-
-            const storedCat = localStorage.getItem('sirius_categories');
-            if (storedCat) categories = JSON.parse(storedCat);
-
-            const storedEntries = localStorage.getItem('sirius_entries');
-            if (storedEntries) entries = JSON.parse(storedEntries);
-
-            const storedUser = localStorage.getItem('sirius_current_user');
-            if (storedUser) currentUser = JSON.parse(storedUser);
-        } catch (e) {
-            console.log('Using default in-memory storage fallback');
-        }
-
+        let categoryChartInstance = null;
+        let userContribChartInstance = null;
         let timerInterval = null;
         let timerSeconds = 0;
         let isTimerRunning = false;
+
+        try {
+            if (localStorage.getItem('sirius_users')) users = JSON.parse(localStorage.getItem('sirius_users'));
+            if (localStorage.getItem('sirius_categories')) categories = JSON.parse(localStorage.getItem('sirius_categories'));
+            if (localStorage.getItem('sirius_entries')) entries = JSON.parse(localStorage.getItem('sirius_entries'));
+            if (localStorage.getItem('sirius_current_user')) currentUser = JSON.parse(localStorage.getItem('sirius_current_user'));
+        } catch (e) {}
 
         window.addEventListener('DOMContentLoaded', () => {
             saveData();
@@ -251,11 +377,8 @@
                 localStorage.setItem('sirius_users', JSON.stringify(users));
                 localStorage.setItem('sirius_categories', JSON.stringify(categories));
                 localStorage.setItem('sirius_entries', JSON.stringify(entries));
-                if (currentUser) {
-                    localStorage.setItem('sirius_current_user', JSON.stringify(currentUser));
-                } else {
-                    localStorage.removeItem('sirius_current_user');
-                }
+                if (currentUser) localStorage.setItem('sirius_current_user', JSON.stringify(currentUser));
+                else localStorage.removeItem('sirius_current_user');
             } catch (e) {}
         }
 
@@ -264,17 +387,15 @@
             const emailInput = document.getElementById('loginEmail').value.trim().toLowerCase();
             const passwordInput = document.getElementById('loginPassword').value.trim();
             const errorDiv = document.getElementById('loginError');
-
             errorDiv.classList.add('hidden');
 
             const foundUser = users.find(u => u.email.toLowerCase() === emailInput && u.password === passwordInput);
-
             if (foundUser) {
                 currentUser = foundUser;
                 saveData();
                 showDashboard();
             } else {
-                errorDiv.innerText = "Invalid credentials. Please use default login details.";
+                errorDiv.innerText = "Invalid credentials. Use valico@siriuscommunity.org / sirius123";
                 errorDiv.classList.remove('hidden');
             }
         }
@@ -298,7 +419,6 @@
             document.getElementById('credentialsTip').style.display = 'none';
 
             renderAuthHeader();
-
             if (currentUser.role === 'admin') {
                 document.getElementById('tabAdminBtn').style.display = 'flex';
             } else {
@@ -308,7 +428,6 @@
             switchTab('user');
             populateCategories();
             renderUserTable();
-            renderAdminTable();
         }
 
         function renderAuthHeader() {
@@ -334,33 +453,43 @@
                 aBtn.className = "flex-1 py-3 px-4 font-semibold text-sm rounded-lg flex items-center justify-center gap-2 transition cursor-pointer text-slate-600 hover:text-slate-900 hover:bg-slate-100";
                 uTab.classList.remove('hidden');
                 aTab.classList.add('hidden');
+                renderUserTable();
             } else {
                 aBtn.className = "flex-1 py-3 px-4 font-semibold text-sm rounded-lg flex items-center justify-center gap-2 transition cursor-pointer bg-emerald-700 text-white shadow-xs";
                 uBtn.className = "flex-1 py-3 px-4 font-semibold text-sm rounded-lg flex items-center justify-center gap-2 transition cursor-pointer text-slate-600 hover:text-slate-900 hover:bg-slate-100";
                 aTab.classList.remove('hidden');
                 uTab.classList.add('hidden');
-                renderAdminTable();
+                renderAdminDashboard();
             }
         }
 
         function populateCategories() {
-            const sel = document.getElementById('timerCategory');
-            sel.innerHTML = '';
-            categories.forEach(c => {
-                const opt = document.createElement('option');
-                opt.value = c;
-                opt.innerText = c;
-                sel.appendChild(opt);
-            });
+            const timerSel = document.getElementById('timerCategory');
+            const filterSel = document.getElementById('adminFilterCategory');
+            if (timerSel) {
+                timerSel.innerHTML = '';
+                categories.forEach(c => {
+                    const opt = document.createElement('option');
+                    opt.value = c; opt.innerText = c;
+                    timerSel.appendChild(opt);
+                });
+            }
+            if (filterSel) {
+                const cur = filterSel.value;
+                filterSel.innerHTML = '<option value="ALL">All Categories</option>';
+                categories.forEach(c => {
+                    const opt = document.createElement('option');
+                    opt.value = c; opt.innerText = c;
+                    filterSel.appendChild(opt);
+                });
+                if (cur) filterSel.value = cur;
+            }
         }
 
         function toggleTimer() {
             const task = document.getElementById('timerTask').value.trim();
             if (!isTimerRunning) {
-                if (!task) {
-                    alert('Enter task description first');
-                    return;
-                }
+                if (!task) { alert('Enter task description'); return; }
                 isTimerRunning = true;
                 document.getElementById('timerToggleText').innerText = "Stop & Save";
                 document.getElementById('timerToggleBtn').className = "w-full py-2.5 px-4 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-lg shadow-xs transition flex items-center justify-center gap-2 cursor-pointer";
@@ -383,6 +512,7 @@
                         userId: currentUser.id,
                         task: task,
                         category: document.getElementById('timerCategory').value,
+                        workType: document.getElementById('timerWorkType').value,
                         date: new Date().toISOString().split('T')[0],
                         hours: hrs
                     });
@@ -394,13 +524,13 @@
                 document.getElementById('timerTask').value = '';
                 document.getElementById('timerToggleText').innerText = "Start";
                 document.getElementById('timerToggleBtn').className = "w-full py-2.5 px-4 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-lg shadow-xs transition flex items-center justify-center gap-2 cursor-pointer";
-
                 renderUserTable();
             }
         }
 
         function renderUserTable() {
             const tbody = document.getElementById('myEntriesTable');
+            if (!tbody) return;
             tbody.innerHTML = '';
             const myEntries = entries.filter(e => e.userId === currentUser.id);
 
@@ -409,42 +539,174 @@
                 tr.innerHTML = `
                     <td class="py-2.5 px-2 font-medium text-slate-800">${e.task}</td>
                     <td class="py-2.5 px-2"><span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded text-[11px]">${e.category}</span></td>
+                    <td class="py-2.5 px-2 text-slate-500">${e.workType || 'Volunteer'}</td>
                     <td class="py-2.5 px-2 font-mono text-slate-500">${e.date}</td>
                     <td class="py-2.5 px-2 font-bold text-emerald-700">${e.hours} hrs</td>
-                    <td class="py-2.5 px-2 text-right">
-                        <button onclick="deleteEntry('${e.id}')" class="text-rose-500 hover:text-rose-700 cursor-pointer"><i class="fa-solid fa-trash"></i></button>
-                    </td>
+                    <td class="py-2.5 px-2 text-right"><button onclick="deleteEntry('${e.id}')" class="text-rose-500 hover:text-rose-700 cursor-pointer"><i class="fa-solid fa-trash"></i></button></td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        function renderAdminTable() {
+        function renderAdminDashboard() {
             if (currentUser.role !== 'admin') return;
 
-            const total = entries.reduce((acc, curr) => acc + curr.hours, 0);
-            document.getElementById('adminStatTotalHours').innerText = `${total.toFixed(1)} hrs`;
+            const totalHours = entries.reduce((acc, curr) => acc + curr.hours, 0);
+            document.getElementById('adminStatTotalHours').innerText = `${totalHours.toFixed(1)} hrs`;
             document.getElementById('adminStatTotalUsers').innerText = users.length;
             document.getElementById('adminStatTotalTasks').innerText = entries.length;
+            document.getElementById('adminStatTotalCategories').innerText = categories.length;
 
+            // Populate filter user dropdown
+            const fUser = document.getElementById('adminFilterUser');
+            const curU = fUser.value;
+            fUser.innerHTML = '<option value="ALL">All Members</option>';
+            users.forEach(u => {
+                const opt = document.createElement('option');
+                opt.value = u.id; opt.innerText = u.name;
+                fUser.appendChild(opt);
+            });
+            if (curU) fUser.value = curU;
+
+            // Render Audit Table with filters
+            const fCat = document.getElementById('adminFilterCategory').value;
+            const keyword = document.getElementById('adminSearchKeyword').value.toLowerCase();
             const tbody = document.getElementById('adminActivityTable');
             tbody.innerHTML = '';
 
-            entries.forEach(e => {
+            let filtered = entries.filter(e => {
+                if (fUser.value !== 'ALL' && e.userId !== fUser.value) return false;
+                if (fCat !== 'ALL' && e.category !== fCat) return false;
+                if (keyword && !e.task.toLowerCase().includes(keyword)) return false;
+                return true;
+            });
+
+            filtered.forEach(e => {
                 const u = users.find(user => user.id === e.userId) || { name: 'Unknown' };
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td class="py-2.5 px-3 font-semibold text-slate-800">${u.name}</td>
                     <td class="py-2.5 px-3 text-slate-700">${e.task}</td>
                     <td class="py-2.5 px-3"><span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded text-[11px]">${e.category}</span></td>
+                    <td class="py-2.5 px-3 text-slate-500">${e.workType || 'Volunteer'}</td>
                     <td class="py-2.5 px-3 font-mono text-slate-500">${e.date}</td>
                     <td class="py-2.5 px-3 font-bold text-emerald-700">${e.hours} hrs</td>
-                    <td class="py-2.5 px-3 text-right">
-                        <button onclick="deleteEntry('${e.id}')" class="text-rose-500 hover:text-rose-700 cursor-pointer"><i class="fa-solid fa-trash"></i></button>
+                    <td class="py-2.5 px-3 text-right"><button onclick="deleteEntry('${e.id}')" class="text-rose-500 hover:text-rose-700 cursor-pointer"><i class="fa-solid fa-trash"></i></button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            renderUserProfilesList();
+            renderCategoriesList();
+            renderCharts();
+        }
+
+        function renderUserProfilesList() {
+            const tbody = document.getElementById('adminUserProfilesTable');
+            tbody.innerHTML = '';
+            users.forEach(u => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="py-2.5"><span class="font-bold">${u.name}</span><br><span class="text-[10px] font-mono text-slate-400">${u.email}</span></td>
+                    <td class="py-2.5"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${u.role==='admin'?'bg-purple-100 text-purple-800':'bg-slate-100 text-slate-700'}">${u.role.toUpperCase()}</span></td>
+                    <td class="py-2.5 text-right space-x-2">
+                        <button onclick="resetPassword('${u.id}')" class="text-amber-600 hover:text-amber-800 cursor-pointer" title="Reset Password"><i class="fa-solid fa-key"></i></button>
+                        ${u.id !== currentUser.id ? `<button onclick="deleteUser('${u.id}')" class="text-rose-500 hover:text-rose-700 cursor-pointer"><i class="fa-solid fa-user-xmark"></i></button>` : ''}
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
+        }
+
+        function renderCategoriesList() {
+            const list = document.getElementById('adminCategoriesList');
+            list.innerHTML = '';
+            categories.forEach((cat, idx) => {
+                const div = document.createElement('div');
+                div.className = "flex justify-between items-center bg-slate-50 p-2.5 rounded-lg border border-slate-200 text-xs";
+                div.innerHTML = `<span class="font-semibold text-slate-700">${cat}</span><button onclick="deleteCategory(${idx})" class="text-rose-500 hover:text-rose-700 cursor-pointer"><i class="fa-solid fa-xmark"></i></button>`;
+                list.appendChild(div);
+            });
+        }
+
+        function renderCharts() {
+            // Category chart
+            const catCtx = document.getElementById('categoryChart').getContext('2d');
+            const catData = categories.map(c => entries.filter(e => e.category === c).reduce((a, b) => a + b.hours, 0));
+            if (categoryChartInstance) categoryChartInstance.destroy();
+            categoryChartInstance = new Chart(catCtx, {
+                type: 'doughnut',
+                data: { labels: categories, datasets: [{ data: catData, backgroundColor: ['#059669', '#0d9488', '#2563eb', '#d97706', '#7c3aed'] }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 10, font: { size: 10 } } } } }
+            });
+
+            // User contrib chart
+            const userCtx = document.getElementById('userContribChart').getContext('2d');
+            const uLabels = users.map(u => u.name);
+            const uData = users.map(u => entries.filter(e => e.userId === u.id).reduce((a, b) => a + b.hours, 0));
+            if (userContribChartInstance) userContribChartInstance.destroy();
+            userContribChartInstance = new Chart(userCtx, {
+                type: 'bar',
+                data: { labels: uLabels, datasets: [{ data: uData, backgroundColor: '#059669' }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+            });
+        }
+
+        // Actions & Modals
+        function openCreateUserModal() { document.getElementById('userModal').classList.remove('hidden'); }
+        function openAddCategoryModal() { document.getElementById('categoryModal').classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+        function saveUserProfile(e) {
+            e.preventDefault();
+            const name = document.getElementById('modalUserName').value.trim();
+            const prefix = document.getElementById('modalUserPrefix').value.trim().toLowerCase();
+            const password = document.getElementById('modalUserPassword').value.trim();
+            const role = document.getElementById('modalUserRole').value;
+            const fullEmail = prefix + DOMAIN;
+
+            if (users.some(u => u.email === fullEmail)) { alert('Email already exists'); return; }
+
+            users.push({ id: 'u_' + Date.now(), email: fullEmail, name, role, password });
+            saveData();
+            closeModal('userModal');
+            renderAdminDashboard();
+        }
+
+        function saveNewCategory() {
+            const name = document.getElementById('newCategoryNameInput').value.trim();
+            if (name && !categories.includes(name)) {
+                categories.push(name);
+                saveData();
+                closeModal('categoryModal');
+                populateCategories();
+                renderAdminDashboard();
+            }
+        }
+
+        function deleteCategory(idx) {
+            showConfirm("Delete Category", `Delete category "${categories[idx]}"?`, () => {
+                categories.splice(idx, 1);
+                saveData();
+                populateCategories();
+                renderAdminDashboard();
+            });
+        }
+
+        function deleteUser(id) {
+            showConfirm("Delete Member", "Delete this member profile?", () => {
+                users = users.filter(u => u.id !== id);
+                entries = entries.filter(e => e.userId !== id);
+                saveData();
+                renderAdminDashboard();
+            });
+        }
+
+        function resetPassword(id) {
+            const u = users.find(x => x.id === id);
+            if (!u) return;
+            const p = prompt(`New password for ${u.name}:`, "sirius123");
+            if (p) { u.password = p.trim(); saveData(); alert('Password updated'); }
         }
 
         function deleteEntry(id) {
@@ -452,30 +714,49 @@
                 entries = entries.filter(e => e.id !== id);
                 saveData();
                 renderUserTable();
-                renderAdminTable();
+                if (currentUser.role === 'admin') renderAdminDashboard();
+            });
+        }
+
+        function exportAllCSV() {
+            let csv = 'Member,Task,Category,WorkType,Date,Hours\n';
+            entries.forEach(e => {
+                const u = users.find(x => x.id === e.userId) || { name: 'Unknown' };
+                csv += `"${u.name}","${e.task}","${e.category}","${e.workType || 'Volunteer'}","${e.date}",${e.hours}\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `sirius_export_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+        }
+
+        function exportAllJSON() {
+            const blob = new Blob([JSON.stringify({ users, categories, entries }, null, 2)], { type: 'application/json' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `sirius_backup_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+        }
+
+        function resetToSampleData() {
+            showConfirm("Reset", "Restore demo data?", () => {
+                users = DEFAULT_USERS; categories = DEFAULT_CATEGORIES; entries = DEFAULT_ENTRIES;
+                saveData(); showDashboard();
             });
         }
 
         function showConfirm(title, message, onYes) {
             document.getElementById('confirmTitle').innerText = title;
             document.getElementById('confirmMessage').innerText = message;
-            
             const yesBtn = document.getElementById('confirmYesBtn');
-            const newYesBtn = yesBtn.cloneNode(true);
-            yesBtn.parentNode.replaceChild(newYesBtn, yesBtn);
-            
-            newYesBtn.onclick = function() {
-                closeConfirmModal();
-                onYes();
-            };
-
+            const newBtn = yesBtn.cloneNode(true);
+            yesBtn.parentNode.replaceChild(newBtn, yesBtn);
+            newBtn.onclick = () => { closeModal('confirmModal'); onYes(); };
             document.getElementById('confirmModal').classList.remove('hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-
-        function closeConfirmModal() {
-            document.getElementById('confirmModal').classList.add('hidden');
-        }
+        function closeConfirmModal() { closeModal('confirmModal'); }
     </script>
 </body>
 </html>
