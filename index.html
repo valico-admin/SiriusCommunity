@@ -100,7 +100,7 @@
 
             <!-- USER TAB -->
             <div id="userTab" class="space-y-6">
-                <!-- Quota Widget (Weekly Goal = 8 hrs, Monthly = 32 hrs, Yearly = 384 hrs) -->
+                <!-- Quota Widget (Weekly = 8 hrs, Monthly = 32 hrs, Yearly = 384 hrs) -->
                 <div class="bg-white rounded-2xl shadow-xs border border-slate-200 p-6">
                     <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4">Volunteer Quotas & Progress</h3>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -928,7 +928,7 @@
             detailsPanel.classList.remove('hidden');
         }
 
-        // --- Admin Dashboard & Daily Breakdown ---
+        // --- Admin Dashboard & Lists Rendering ---
         function renderAdminDashboard() {
             const totalHours = timeEntries.reduce((acc, curr) => acc + parseFloat(curr.duration), 0).toFixed(1);
             document.getElementById('adminStatTotalHours').textContent = `${totalHours} hrs`;
@@ -937,6 +937,8 @@
             document.getElementById('adminStatTotalCategories').textContent = categories.length;
 
             renderAdminDailyView();
+            renderAdminUsersTable();
+            renderAdminCategoriesList();
 
             // Admin Table
             const tbody = document.getElementById('adminActivityTable');
@@ -957,6 +959,62 @@
                 `;
                 tbody.appendChild(tr);
             });
+        }
+
+        function renderAdminUsersTable() {
+            const tbody = document.getElementById('adminUserProfilesTable');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            users.forEach((u, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="py-2">
+                        <div class="font-bold text-slate-800">${u.name}</div>
+                        <div class="text-[10px] text-slate-500">${u.email}</div>
+                    </td>
+                    <td class="py-2">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold ${u.role === 'Admin' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'}">${u.role}</span>
+                    </td>
+                    <td class="py-2 text-right">
+                        ${users.length > 1 ? `<button onclick="deleteUser(${index})" class="text-rose-600 hover:text-rose-800 cursor-pointer"><i class="fa-solid fa-trash"></i></button>` : ''}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderAdminCategoriesList() {
+            const listContainer = document.getElementById('adminCategoriesList');
+            if (!listContainer) return;
+            listContainer.innerHTML = '';
+            categories.forEach((cat, index) => {
+                const item = document.createElement('div');
+                item.className = "flex justify-between items-center bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-xs";
+                item.innerHTML = `
+                    <span class="font-semibold text-slate-700"><i class="fa-solid fa-folder mr-2 text-emerald-700"></i>${cat}</span>
+                    <button onclick="deleteCategory(${index})" class="text-rose-600 hover:text-rose-800 cursor-pointer"><i class="fa-solid fa-trash"></i></button>
+                `;
+                listContainer.appendChild(item);
+            });
+        }
+
+        function deleteUser(index) {
+            if (users[index].email === currentUser.email) {
+                alert("You cannot delete your own active account.");
+                return;
+            }
+            users.splice(index, 1);
+            renderAdminDashboard();
+        }
+
+        function deleteCategory(index) {
+            if (categories.length <= 1) {
+                alert("You must keep at least one category.");
+                return;
+            }
+            categories.splice(index, 1);
+            populateCategoryDropdown();
+            renderAdminDashboard();
         }
 
         function renderAdminDailyView() {
@@ -984,7 +1042,7 @@
             });
         }
 
-        // --- Modals & Management ---
+        // --- Modals ---
         function openCreateUserModal() {
             document.getElementById('userModal').classList.remove('hidden');
         }
@@ -1011,6 +1069,9 @@
                 password
             });
 
+            document.getElementById('modalUserName').value = '';
+            document.getElementById('modalUserPrefix').value = '';
+
             closeUserModal();
             if (currentUser && currentUser.role === 'Admin') renderAdminDashboard();
         }
@@ -1033,6 +1094,7 @@
                 categories.push(catName);
                 populateCategoryDropdown();
             }
+            document.getElementById('modalCategoryName').value = '';
             closeCategoryModal();
             if (currentUser && currentUser.role === 'Admin') renderAdminDashboard();
         }
