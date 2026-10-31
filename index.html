@@ -441,14 +441,19 @@
 
     <!-- JavaScript Logic -->
     <script>
-        // State Management
+        // State Management with LocalStorage persistence for users & categories
         let currentUser = null;
-        let categories = ["Garden & Agriculture", "Community Kitchen", "Maintenance & Infrastructure", "Administration"];
-        let users = [
+        
+        let categories = JSON.parse(localStorage.getItem('sirius_categories')) || [
+            "Garden & Agriculture", "Community Kitchen", "Maintenance & Infrastructure", "Administration"
+        ];
+        
+        let users = JSON.parse(localStorage.getItem('sirius_users')) || [
             { email: "valico@siriuscommunity.org", name: "Valentin Covali", role: "Admin", password: "sirius123" },
             { email: "resident@siriuscommunity.org", name: "Community Resident", role: "Resident", password: "sirius123" }
         ];
-        let timeEntries = [
+
+        let timeEntries = JSON.parse(localStorage.getItem('sirius_entries')) || [
             { id: 101, userEmail: "resident@siriuscommunity.org", userName: "Community Resident", task: "Greenhouse weeding", category: "Garden & Agriculture", type: "Volunteer / Duty", date: new Date().toLocaleDateString('en-US'), rawDate: new Date().toISOString().split('T')[0], duration: "3.50" },
             { id: 102, userEmail: "resident@siriuscommunity.org", userName: "Community Resident", task: "Kitchen prep", category: "Community Kitchen", type: "Volunteer / Duty", date: new Date(Date.now() - 86400000).toLocaleDateString('en-US'), rawDate: new Date(Date.now() - 86400000).toISOString().split('T')[0], duration: "2.00" }
         ];
@@ -460,6 +465,13 @@
 
         let currentCalendarView = 'week';
         let calendarDateCursor = new Date();
+
+        // Save helper
+        function persistData() {
+            localStorage.setItem('sirius_users', JSON.stringify(users));
+            localStorage.setItem('sirius_categories', JSON.stringify(categories));
+            localStorage.setItem('sirius_entries', JSON.stringify(timeEntries));
+        }
 
         // Init App
         window.addEventListener('DOMContentLoaded', () => {
@@ -622,6 +634,7 @@
                 duration: hours.toFixed(2)
             });
 
+            persistData();
             document.getElementById('timerTask').value = '';
             document.getElementById('manualHours').value = '';
             
@@ -717,6 +730,7 @@
                     duration: durationHrs
                 });
 
+                persistData();
                 timerSeconds = 0;
                 document.getElementById('timerDisplay').textContent = "00:00:00";
                 document.getElementById('timerTask').value = '';
@@ -755,6 +769,7 @@
 
         function deleteEntry(id) {
             timeEntries = timeEntries.filter(e => e.id !== id);
+            persistData();
             renderUserWorkspace();
             if (currentUser && currentUser.role === 'Admin') renderAdminDashboard();
         }
@@ -1004,6 +1019,7 @@
                 return;
             }
             users.splice(index, 1);
+            persistData();
             renderAdminDashboard();
         }
 
@@ -1013,6 +1029,7 @@
                 return;
             }
             categories.splice(index, 1);
+            persistData();
             populateCategoryDropdown();
             renderAdminDashboard();
         }
@@ -1069,6 +1086,8 @@
                 password
             });
 
+            persistData();
+
             document.getElementById('modalUserName').value = '';
             document.getElementById('modalUserPrefix').value = '';
 
@@ -1092,11 +1111,17 @@
             }
             if (!categories.includes(catName)) {
                 categories.push(catName);
+                persistData();
                 populateCategoryDropdown();
             }
             document.getElementById('modalCategoryName').value = '';
             closeCategoryModal();
             if (currentUser && currentUser.role === 'Admin') renderAdminDashboard();
+        }
+
+        function resetToSampleData() {
+            localStorage.clear();
+            location.reload();
         }
 
         function exportAllCSV() {
